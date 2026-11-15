@@ -1,0 +1,1180 @@
+{
+  "name": "Faceless video using free gemini",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Scene: {{ $('Get Images').item.json.data.input.prompt }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are a Master Sound Prompt Generator.\nYour task is to create vivid, immersive sound prompts based on a given scene. These prompts will be used to generate background audio that matches the mood and environment of the scene.\n\n## Instructions\n- Generate a one- to two-sentence prompt that captures the ambiance, tone, and key sound elements.\n- Use rich, evocative language to describe the background atmosphere, highlighting specific sounds (e.g., footsteps on cobblestone, distant chatter, wind rustling leaves, faint music, industrial hum).\n- Focus on the background audio — not dialogue, narration, or foreground sound effects.\n- Match the emotion and setting of the scene, whether it's calm, chaotic, eerie, festive, or serene.\n- Avoid vague descriptions; be specific and sensory-driven to maximize immersion.\n- Never include quotation marks (\"\") or newlines (\\n) in the output.\n\n## Output\nReturn only the crafted sound prompt text, ready to be used for an audio generation model.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1104,
+        400
+      ],
+      "id": "30f593f9-93e0-4914-a162-52e5bcd34bb0",
+      "name": "Sound Agent"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/sound-generation",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ $json.output.replace(/\"/g, '') }}"
+            },
+            {
+              "name": "duration_seconds",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1472,
+        400
+      ],
+      "id": "837773af-c76b-40d8-8005-e1b65ea83c85",
+      "name": "Generate Audio",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jjzSwsICR6i2jXrl",
+          "name": "Runway"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Get Videos').item.json.id }}.mp3",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1hhZhHBv0zm3adye9LE_sxwme7z7yUXw5",
+          "mode": "list",
+          "cachedResultName": "Audio Files",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1hhZhHBv0zm3adye9LE_sxwme7z7yUXw5"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1648,
+        400
+      ],
+      "id": "17e941da-e01b-4901-b4ef-238b43bb4747",
+      "name": "Upload to Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "NTgEZjwzRiKWXjNN",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1136,
+        752
+      ],
+      "id": "1d4e3f70-369b-4fec-9e67-2fc512334661",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.creatomate.com/v2/renders",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer acc3d7d00c964380bffec4559b6f68ea4ac9f64bc2eda293351d0fe788675045bb2426a032a7cadb9a1903139533f070"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"template_id\": \"119f0876-ab29-41a7-82ec-6fef594567a3\",\n  \"modifications\": {\n    \"Video-1.source\": \"{{ $json.urls[0].url }}\",\n    \"Video-2.source\": \"{{ $json.urls[1].url }}\",\n    \"Video-3.source\": \"{{ $json.urls[2].url }}\",\n    \"Video-4.source\": \"{{ $json.urls[3].url }}\",\n    \"Audio-1.source\": \"{{ $json.urls[0].webContentLink }}\",\n    \"Audio-2.source\": \"{{ $json.urls[1].webContentLink }}\",\n    \"Audio-3.source\": \"{{ $json.urls[2].webContentLink }}\",\n    \"Audio-4.source\": \"{{ $json.urls[3].webContentLink }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1536,
+        752
+      ],
+      "id": "d0c2d911-64d9-4d09-ac54-31ca670f2872",
+      "name": "Render Video"
+    },
+    {
+      "parameters": {
+        "amount": 25
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1728,
+        752
+      ],
+      "id": "1ebbe97f-ccf6-4f1c-b832-4595e935aba3",
+      "name": "25 Seconds",
+      "webhookId": "d5cd29e8-d3f7-491c-a6b6-2d705aa47931"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1136,
+        976
+      ],
+      "id": "c1b187c4-5f93-418e-8b02-bf72845f499c",
+      "name": "Download Video"
+    },
+    {
+      "parameters": {
+        "content": "# Generate Image Prompts",
+        "height": 540,
+        "width": 740,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -336,
+        304
+      ],
+      "typeVersion": 1,
+      "id": "ca016f44-80be-49e0-bda2-5e16679d72b1",
+      "name": "Sticky Note3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "# Generate Images\n",
+        "height": 260,
+        "width": 600,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        432,
+        304
+      ],
+      "typeVersion": 1,
+      "id": "b6d6452a-dc52-4a70-a443-53b6991961bd",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "# Generate Audio\n\n",
+        "height": 320,
+        "width": 980,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1056,
+        304
+      ],
+      "typeVersion": 1,
+      "id": "3ede407a-97c6-42af-910d-4b8f504f85d6",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Render & Log\n",
+        "height": 500,
+        "width": 1040
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1056,
+        656
+      ],
+      "typeVersion": 1,
+      "id": "ae9bda94-7600-4e91-945a-7ac4dd3c4eb7",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.dev.runwayml.com/v1/tasks/{{ $json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Runway-Version",
+              "value": "2024-11-06"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        848,
+        688
+      ],
+      "id": "1a94706c-8cfb-462c-9300-ede3966a3ca9",
+      "name": "Get Videos",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jjzSwsICR6i2jXrl",
+          "name": "Runway"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.dev.runwayml.com/v1/image_to_video",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Runway-Version",
+              "value": "2024-11-06"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "promptImage",
+              "value": "={{ $json.webViewLink }}"
+            },
+            {
+              "name": "model",
+              "value": "gen3a_turbo"
+            },
+            {
+              "name": "ratio",
+              "value": "768:1280"
+            },
+            {
+              "name": "duration",
+              "value": "5"
+            },
+            {
+              "name": "promptText",
+              "value": "={{ $('Split Out').item.json.output.replace(/\"/g, '') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        512,
+        688
+      ],
+      "id": "96d6096e-e2c2-4db2-b840-6e60b7981680",
+      "name": "Generate Videos",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jjzSwsICR6i2jXrl",
+          "name": "Runway"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Generate Videos\n",
+        "height": 260,
+        "width": 600,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        432,
+        592
+      ],
+      "typeVersion": 1,
+      "id": "8c782b2f-0d68-4a6c-b28a-8b9f87ef4996",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// N8n Code Node to extract URLs from output arrays and combine them into a single array\n// This code assumes your input JSON is in items[0].json or is multiple items\n// Determine data source format\nlet inputArray;\nif (items.length === 1 && Array.isArray(items[0].json)) {\n  // If we have a single item containing our array\n  inputArray = items[0].json;\n} else if (items.length > 1) {\n  // If we already have multiple items, each containing part of our data\n  inputArray = items.map(item => item.json || item);\n} else {\n  throw new Error('Input structure not recognized. Please check your data format.');\n}\n// Create a single array to hold all URLs\nconst urlArray = [];\n// Process each item in the input array\nfor (const item of inputArray) {\n  // Get the data object\n  const data = item;\n  \n  // Check if the item has an output array\n  if (data.output && Array.isArray(data.output)) {\n    // For each URL in the output array, add to our URL array\n    for (const url of data.output) {\n      // Add URL along with metadata including the web content link\n      urlArray.push({\n        url: url,\n        sourceId: data.id,\n        createdAt: data.createdAt,\n        webContentLink: data.webContentLink || null // Add the web content link\n      });\n    }\n  }\n}\n// Return a single item containing the array of all URLs\nreturn [{\n  json: {\n    urls: urlArray\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1328,
+        752
+      ],
+      "id": "e95ed1d9-c786-4ddb-9edc-89cce969555b",
+      "name": "Split Out Parts"
+    },
+    {
+      "parameters": {
+        "operation": "share",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "reader",
+            "type": "anyone",
+            "allowFileDiscovery": true
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1856,
+        400
+      ],
+      "id": "697cd48e-c42b-4c94-846e-fa855fcca482",
+      "name": "Share File",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "NTgEZjwzRiKWXjNN",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "videoTopic"
+            },
+            {
+              "name": "chatID"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -272,
+        464
+      ],
+      "id": "baa89d76-b170-4d63-8926-9fbf058623a1",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"Part 1\": \"Prompt for part 1\",\n  \"Part 2\": \"Prompt for part 2\",\n  \"Part 3\": \"Prompt for part 3\",\n  \"Part 4\": \"Prompt for part 4\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        112,
+        656
+      ],
+      "id": "7cf94f42-9808-4c65-bea3-6c84aaa64f1a",
+      "name": "4 Parts"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Video Topic: {{ $json.videoTopic }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Overview\nYou are a Master Visual Story Structuring Agent.\nYour task is to take a given short video topic and split it into four parts that together form a cohesive, vivid story, optimized for text-to-image generation.\n\n## Instructions:\n- You must create exactly four parts: Part 1, Part 2, Part 3, and Part 4.\n- Describe the subject of the story in the EXACT same way in all four parts. Each part should be consistent.\n- Each part should build upon the previous, creating a complete visual story by the end.\n- Every part must be written as a high-quality, richly detailed image prompt, following professional standards for models like Flux or similar.\n- Describe characters, settings, outfits, actions, and background elements vividly and precisely.\n- Use rich, imaginative language to maximize visual fidelity.\n- Avoid generic terms — always opt for specific and colorful descriptions.\n- No quotation marks (\"\") or newlines (\\n) should be included in the output.\n- Keep the description natural and seamless so it can be fed directly into a text-to-image model.\n\n## Key Elements to Include in Each Part:\n- Clear description of main subjects (appearance, outfits, facial expressions, poses)\n- Accessories or objects that add to the scene\n- A vivid background that matches the theme and enhances the overall story\n- Consistency and natural progression from part to part\n\n## Output Format:\nReturn your response structured into four fields:\n- Part 1: [Vivid image prompt for Part 1]\n- Part 2: [Vivid image prompt for Part 2]\n- Part 3: [Vivid image prompt for Part 3]\n- Part 4: [Vivid image prompt for Part 4]\n\nOnly output the fields listed above.\nMake sure the story across all four parts feels cohesive, visually rich, and cinematic."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -96,
+        464
+      ],
+      "id": "83dbb1c5-5557-40bd-a27c-c733923965f9",
+      "name": "Image Prompt Agent"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        224,
+        464
+      ],
+      "id": "4e2eb390-4d5e-41ee-b0af-d195f59b3b53",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "sendVideo",
+        "chatId": "={{ $('When Executed by Another Workflow').first().json.chatID }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1312,
+        976
+      ],
+      "id": "e69e0b3e-b618-494b-ba50-9c00ca2688e0",
+      "name": "Send Video",
+      "webhookId": "cdeb2987-d275-480b-8532-f69bbed64999",
+      "credentials": {
+        "telegramApi": {
+          "id": "h82NteChD1TH4z1F",
+          "name": "Arhan Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Video: {{ $('When Executed by Another Workflow').first().json.videoTopic }}"
+            },
+            {
+              "content": "Create a 3-4 word title for the given video",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1504,
+        976
+      ],
+      "id": "61ac9eaf-081a-4e3e-9eb8-f3f7ea8345cd",
+      "name": "Title",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1JqOTd49heNBdmrf5hSwxI66X724tspAmSjzWoA6-EU0",
+          "mode": "list",
+          "cachedResultName": "Marketing Team Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JqOTd49heNBdmrf5hSwxI66X724tspAmSjzWoA6-EU0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JqOTd49heNBdmrf5hSwxI66X724tspAmSjzWoA6-EU0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $json.message.content }}",
+            "Request": "={{ $('When Executed by Another Workflow').first().json.videoTopic }}",
+            "Link": "={{ $('Download Video').item.json.url }}",
+            "Type": "Video"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Request",
+              "displayName": "Request",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Post",
+              "displayName": "Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1872,
+        976
+      ],
+      "id": "04b20dec-bd32-43d3-b957-af7b35a7b349",
+      "name": "Log Video",
+      "credentials": {
+        "googleApi": {
+          "id": "A3rewxzpZLvNl6s1",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 90
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        688
+      ],
+      "id": "ca15e417-d7a7-4668-b6bb-9cf308e37653",
+      "name": "90_Seconds",
+      "webhookId": "3ce99001-8f5a-4c0a-9b25-e3e261fcc778"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -144,
+        736
+      ],
+      "id": "f4df4d3e-cc96-465a-9b68-c5782441593a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## Note by Arhan...\n\n1. **Add Telegram Credential**  \n2. **Add Openai API key Header**  \n3. **Add Google Cloud Credential for sheets and google drive**  \n4. **Create a spreadsheet in sheets (No need to do it if already done...)**  \n5. **Create a folder in Google Drive (No need to do it if already done...)**  \n6. **PIAPI header Credential**  \n7. **Runway Header Crdential**  \n8. **Eleven Labs Header Credential**  ",
+        "height": 272,
+        "width": 496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1a4ebf84-bf75-4d37-a87f-6689909c76f5",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        336
+      ],
+      "id": "c982dd16-983c-4769-b1da-e906d09298c0",
+      "name": "gpt-4.1-mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Note by Arhan...\n\nGoogle Drive folder name: Audio Files\nGoogle sheets name: Marketing Team Log",
+        "height": 208,
+        "width": 496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        80
+      ],
+      "id": "a2f2cd90-a08d-4484-8423-e95ad6426a27",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## CreateToMate json\n\n{\n  \"output_format\": \"mp4\",\n  \"width\": 1080,\n  \"height\": 1920,\n  \"elements\": [\n    {\n      \"id\": \"87e27d0a-394f-4083-8cab-081494799fa3\",\n      \"name\": \"Video-1\",\n      \"type\": \"video\",\n      \"track\": 1,\n      \"time\": 0,\n      \"duration\": 5,\n      \"source\": \"placeholder\",\n      \"dynamic\": true\n    },\n    {\n      \"id\": \"91fd56b8-43a2-4c54-9e7f-274f9c82a1e\",\n      \"name\": \"Video-2\",\n      \"type\": \"video\",\n      \"track\": 1,\n      \"time\": 5,\n      \"duration\": 5,\n      \"source\": \"placeholder\",\n      \"dynamic\": true\n    },\n    {\n      \"id\": \"389075bc-c76b-423a-bc7d-8aea1e560e28\",\n      \"name\": \"Video-3\",\n      \"type\": \"video\",\n      \"track\": 1,\n      \"time\": 10,\n      \"duration\": 5,\n      \"source\": \"placeholder\",\n      \"dynamic\": true\n    },\n    {\n      \"id\": \"6f8a2d3c-51b9-4e67-a5d2-9c7b384b6e2f\",\n      \"name\": \"Video-4\",\n      \"type\": \"video\",\n      \"track\": 1,\n      \"time\": 15,\n      \"duration\": 5,\n      \"source\": \"placeholder\",\n      \"dynamic\": true\n    },\n    {\n      \"id\": \"5e92f4a7-12c3-4d8b-b5f3-7a6e8d2b9c1e\",\n      \"name\": \"Audio-1\",\n      \"type\": \"audio\",\n      \"track\": 2,\n      \"time\": 0,\n      \"duration\": 5,\n      \"source\": \"placeholder\",\n      \"dynamic\": true\n    },\n    {\n      \"id\": \"7d8e9f0a-1b2c-3d4e-5f6g-7h8i9j0k1l2\",\n      \"name\": \"Audio-2\",\n      \"type\": \"audio\",\n      \"track\": 2,\n      \"time\": 5,\n      \"duration\": 5,\n      \"source\": \"placeholder\",\n      \"dynamic\": true\n    },\n    {\n      \"id\": \"3m4n5o6p-7q8r-9s0t-1u2v-3w4x5y6z7a8\",\n      \"name\": \"Audio-3\",\n      \"type\": \"audio\",\n      \"track\": 2,\n      \"time\": 10,\n      \"duration\": 5,\n      \"source\": \"placeholder\",\n      \"dynamic\": true\n    },\n    {\n      \"id\": \"9b0c1d2e-3f4g-5h6i-7j8k-9l0m1n2o3p4\",\n      \"name\": \"Audio-4\",\n      \"type\": \"audio\",\n      \"track\": 2,\n      \"time\": 15,\n      \"duration\": 5,\n      \"source\": \"placeholder\",\n      \"dynamic\": true\n    }\n  ]\n}",
+        "height": 1744,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        0
+      ],
+      "id": "fa3ccdc8-6cdd-4b66-bf48-0298e109518b",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## CreateToMate Link\n\nhttps://creatomate.com/\n\nCreate new template\nClick on Source Editor\nPaste the json\nClick on Use Template -> API Integration\nCopy the curl\nPaste it in the render video node\n\nChange the body modifications to this\n\n\"modifications\": {\n    \"Video-1.source\": \"{{ $json.urls[0].url }}\",\n    \"Video-2.source\": \"{{ $json.urls[1].url }}\",\n    \"Video-3.source\": \"{{ $json.urls[2].url }}\",\n    \"Video-4.source\": \"{{ $json.urls[3].url }}\",\n    \"Audio-1.source\": \"{{ $json.urls[0].webContentLink }}\",\n    \"Audio-2.source\": \"{{ $json.urls[1].webContentLink }}\",\n    \"Audio-3.source\": \"{{ $json.urls[2].webContentLink }}\",\n    \"Audio-4.source\": \"{{ $json.urls[3].webContentLink }}\"\n  }\n}\n",
+        "height": 576,
+        "width": 384
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2912,
+        304
+      ],
+      "id": "b61449bd-2289-4c3b-82c4-db1239bce95c",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        496,
+        1104
+      ],
+      "id": "37d4c3dd-67fe-43d9-ba17-2e6516d2f0aa",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"google/gemini-2.5-flash-image-preview:free\",\n  \"modalities\": [\"image\", \"text\"],\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.output.replace(/\"/g, '') }}\"\n    }\n  ]\n}\n",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        496,
+        400
+      ],
+      "id": "8377378b-14db-4f68-ab67-4d00d5182e1d",
+      "name": "HTTP Request",
+      "credentials": {
+        "openRouterApi": {
+          "id": "n6Q99htRsl2laNAf",
+          "name": "Arhan openrouter"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "461c8127-45c5-4f39-ad02-1cc150a97bd8",
+              "name": "data",
+              "value": "={{ $json.choices[0].message.images[0]['image_url'][\"url\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "1e1ed955-d1ef-46f2-b85d-a36aa9cac013",
+              "name": "base",
+              "value": "={{ $json.choices[0].message.images[0]['image_url'][\"url\"].split(\",\")[1]}}",
+              "type": "string"
+            },
+            {
+              "id": "480cd84e-3cd3-46ba-ba29-c4bdba9693ae",
+              "name": "mime",
+              "value": "={{$json[\"choices\"][0][\"message\"][\"images\"][0][\"image_url\"][\"url\"].match(/^data:([^;]+)/)[1]}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        400
+      ],
+      "id": "54d823ab-5f34-47e9-bcbd-aff83cb4494d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        784,
+        384
+      ],
+      "id": "f9b0fb37-28e9-433b-956f-9c66a46d2703",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('HTTP Request').item.json.id }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/u/0/folders/17ZyogLzml6u90TbmhdWhlOnW0gcFk6cC",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        928,
+        384
+      ],
+      "id": "391ce308-3ee8-4775-be69-9ae7b2ebb62c",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YE6yOsvKqeR51O4M",
+          "name": "Arhan drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        672
+      ],
+      "id": "353bbea2-ff34-41c3-b3d4-f36407c41247",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "sivuf6IpHFsJoEvh",
+          "name": "Arhan Groq"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Sound Agent": {
+      "main": [
+        [
+          {
+            "node": "Generate Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Audio": {
+      "main": [
+        [
+          {
+            "node": "Upload to Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Drive": {
+      "main": [
+        [
+          {
+            "node": "Share File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Split Out Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Render Video": {
+      "main": [
+        [
+          {
+            "node": "25 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "25 Seconds": {
+      "main": [
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        [
+          {
+            "node": "Send Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Videos": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sound Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Videos": {
+      "main": [
+        [
+          {
+            "node": "90_Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Parts": {
+      "main": [
+        [
+          {
+            "node": "Render Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share File": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Image Prompt Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4 Parts": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Image Prompt Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Prompt Agent": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Video": {
+      "main": [
+        [
+          {
+            "node": "Title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Title": {
+      "main": [
+        [
+          {
+            "node": "Log Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "90_Seconds": {
+      "main": [
+        [
+          {
+            "node": "Get Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "gpt-4.1-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Sound Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Generate Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Image Prompt Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "videoTopic": "A beaver building a house, showing the beaver gathering sticks, arranging them by a riverbank, creating a dam and then constructing a cozy lodge inside.",
+          "chatID": 8056822155
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

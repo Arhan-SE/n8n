@@ -1,0 +1,1605 @@
+{
+  "name": "Reddit",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3000,
+        680
+      ],
+      "id": "84c85329-1df7-44f5-81bc-01a5a686e481",
+      "name": "Loop Over Items",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c57cdb9c-c764-47a0-8e6a-4b8ad472fca6",
+              "leftValue": "={{ $json.title_exists }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3380,
+        720
+      ],
+      "id": "475ed96c-d9be-4044-8ccf-1428d67d860b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT EXISTS (\n    SELECT 1\n    FROM reddit\n    WHERE title = '{{ $json.title }}'\n) AS title_exists;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        3180,
+        720
+      ],
+      "id": "c122fefa-60ce-4ac4-a0ff-3135e480a443",
+      "name": "Check If Exists",
+      "credentials": {
+        "postgres": {
+          "id": "EYmLMyd0530y8qkY",
+          "name": "Postgres account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "reddit",
+          "mode": "list",
+          "cachedResultName": "reddit"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "replied": false,
+            "url": "={{ $('Loop Over Items').item.json.permalink }}",
+            "title": "={{ $('Loop Over Items').item.json.title }}",
+            "post_user": "={{ $('Loop Over Items').item.json.author }}",
+            "post_content": "={{ $('Loop Over Items').item.json.selftext || null }}",
+            "sub_reddit": "={{ $('Loop Over Items').item.json.subreddit }}",
+            "post_date": "={{ new Date($('Loop Over Items').item.json.created_utc * 1000).toISOString() }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "post_date",
+              "displayName": "post_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "post_reply",
+              "displayName": "post_reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "replied",
+              "displayName": "replied",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "post_content",
+              "displayName": "post_content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "post_user",
+              "displayName": "post_user",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "is_good",
+              "displayName": "is_good",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sub_reddit",
+              "displayName": "sub_reddit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        4200,
+        780
+      ],
+      "id": "e631c26c-7b6d-40e8-be47-6466ddf22da5",
+      "name": "If Not Exist - Push To DB",
+      "credentials": {
+        "postgres": {
+          "id": "EYmLMyd0530y8qkY",
+          "name": "Postgres account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        3700,
+        900
+      ],
+      "id": "53ffccfe-c16b-42c8-8f60-5d0dc8844e79",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "PZL4XUf2Yf9vInoE",
+          "name": "Horizon OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"response\": true,\n\"reason\" : \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        3860,
+        900
+      ],
+      "id": "79f3d46e-c7f5-469d-8d2a-6803fe3e38b0",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0b2cad96-4c95-4481-b56f-98af39ad01bf",
+              "leftValue": "={{ $json.output.response }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4040,
+        720
+      ],
+      "id": "f21f30bf-6f0d-4781-9262-9947f62219b2",
+      "name": "If Post Is Good"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"reply\" : \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        5280,
+        940
+      ],
+      "id": "79998e00-1214-4715-8e18-51fdb08c0cf2",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "reddit",
+          "mode": "list",
+          "cachedResultName": "reddit"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "is_good": true,
+            "id": "={{ $('If Not Exist - Push To DB').item.json.id }}",
+            "post_reply": "={{ $('Create Post Reply').item.json.output.reply }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "post_date",
+              "displayName": "post_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "post_reply",
+              "displayName": "post_reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "replied",
+              "displayName": "replied",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "post_content",
+              "displayName": "post_content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "post_user",
+              "displayName": "post_user",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "is_good",
+              "displayName": "is_good",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        6020,
+        980
+      ],
+      "id": "e56e4cbf-c6b4-48ec-9a47-0cfc96c660ad",
+      "name": "Update Post Reply",
+      "credentials": {
+        "postgres": {
+          "id": "EYmLMyd0530y8qkY",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Your job is to check to see if this post can be replied to in a meaningful way that can provide value. The post MUST BE RELATED to the following topics:\n\nProgramming Languages: Python, JavaScript, TypeScript, Solidity\n\nAutomation & AI Tools: Scrapy, Selenium, Puppeteer, BeautifulSoup, Requests, DeathByCaptcha, NLP, AI/ML Models, OCR, chatgpt, claude, gemeni\n\nWeb Development Frameworks:\n\nBackend: Django, FastAPI, Flask, Node.js, SQLAlchemy\n\nFrontend: React.js, Next.js, Vue.js\n\nDatabases: PostgreSQL, MySQL, Supabase\n\nInfrastructure & DevOps: Docker, Kubernetes, AWS (Lambda, Firehose), GitHub Actions, GitLab CI/CD,\n\nAPIs & Integrations\n\nNo-Code & Automation Tools: N8N, Lovable, \n\nOthers: WebSockets\n\nBusiness automation , webapps, Lead generation systems\n\n\nYou will provide a true or false response, and a reason why you chose that response. If the post is a spammy post promoting something then mark false.\n\nYour output will be as follows:\n{\n\"response\": true,\n\"reason\" : \"\"\n}\n\nHere is the post details:\n{{ $('Loop Over Items').item.json.title }}}\n\n{{ $('Loop Over Items').item.json.post_content }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        3700,
+        720
+      ],
+      "id": "d7646c17-a317-4768-b8bd-b6a6665e153c",
+      "name": "Check If Post Is Good",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are Austin Reed, a highly skilled software developer and automation expert with over a decade of experience. You specialize in:\n\n✅ Automation & AI-driven solutions (scrapers, bots, NLP, trading strategies)\n✅ Full-stack development (React.js, Django, Node.js, Vue.js, PostgreSQL)\n✅ Scalable architecture, backend optimization, and CI/CD pipelines\n✅ CTO-level consulting and strategic tech leadership\n✅ Large-scale data scraping and training data generation\n\nYou’ve worked across aviation, finance, SaaS, blockchain, e-commerce, and meal planning industries. You consistently deliver high-performance systems with real business impact.\n\nHere’s how your voice should sound:\n\nConfident but not arrogant: “I’ve built systems that scrape data from 1,000+ websites to train AI models—happy to bring that expertise to your project.”\n\nSpecific and technical: “For this, I’d likely use Scrapy with rotating proxies, automated CAPTCHA solving, and a PostgreSQL pipeline to ensure scalable aggregation.”\n\nStrategic: “From a CTO standpoint, I’d advise setting up a CI/CD pipeline using GitHub Actions and Docker to streamline testing and deployment.”\n\nValue-oriented: “I’m focused on delivering solutions that reduce manual work, increase scalability, and drive measurable impact fast.”\n\nSocial Media & Community Style:\n\nBe encouraging and constructive — especially to developers learning or exploring automation and AI.\n\nCelebrate innovation and curiosity: “This is a great direction — I’ve seen similar approaches work really well in data aggregation projects.”\n\nSupport others openly: “If you’re diving into Puppeteer or Scrapy, happy to share some battle-tested tips — it’s a fun space to explore.”\n\nStay grounded but optimistic: “Solving performance bottlenecks in scraping pipelines can be tough — but it’s 100% doable with smart proxy rotation and parallelization.”\n\nYour job is to research and craft a reply to the following Reddit post. The reply should be helpful, insightful, and relevant to the discussion. Use a conversational tone and include emojis to make the reply more engaging.\n\nYou have access to the following tools:\n\n1. \"browse_web\"  \nUse this tool to fetch and summarize the content of a public webpage.You must pass a url you want to use to search in the url field. \nInput:\n{\n  \"tool\": \"browse_web\",\n  \"url\": \"https://example.com\"\n}\n\n2. \"video_transcripts\"  \nUse this tool to search through transcripts from Austin’s videos on n8n, Python, automation, and other tutorials.  \nInput:\n{\n  \"tool\": \"video_transcripts\",\n  \"query\": \"your search query here\"\n}\n\n When using knowledge from a video if it is warranted you can include the link to the video in the response. Do it in a way that does not promote the video, but instead provides value. Here is a current list of videos austin made that may be relevant:\n\n{{ $('Aggregate').all().map(i => \"- \" + i.json.title).join('\\n') }}\n\n3. \"austin_history\"  \nUse this tool to search through a knowledge base about Austin’s work experience, companies, and personal stories.  \nInput:\n{\n  \"tool\": \"austin_history\",\n  \"query\": \"your search query here\"\n}\n\n💡 Choose the most relevant tool before answering. If a tool is needed, return only the tool JSON and wait for the result.\n\nOnce you have enough information, craft your reply using this format:\n\n{\n  \"reply\": \"🎯 [your insightful Reddit reply here]\"\n}\n\nDo not use the tools if you do not need to. IF it is a post of somebody sharing their work, just provide value. Try not to be overbearing with the encouragement if you give it. If you give encouragement do not give any advice. Do not use hyphens. Use dude and bro a lot(be abit more informal) and try to mimic my voice if you can! Remember to use formatting that works within reddit comments. Ideal replies are between 50 and 150 words. Maximum reply length is 300 words. Make some natural typos sometimes on purpose. The goal is to make this look a bit more human.\n\n\n\nHere is the Reddit post you will be replying to:\n\n{{ $('If Not Exist - Push To DB').item.json.title }}\n\n{{ $('If Not Exist - Push To DB').item.json.post_content }}\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        5060,
+        740
+      ],
+      "id": "565ef393-cbd8-4873-8c6a-22f6d7638240",
+      "name": "Create Post Reply",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-3-7-sonnet-20250219",
+          "cachedResultName": "Claude 3.7 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        5000,
+        940
+      ],
+      "id": "3b268ac1-aa27-4628-936b-42c0a81ab22e",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "UqvGwi1J8OkrdbMR",
+          "name": "Horizon Claude"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "title"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        4700,
+        740
+      ],
+      "id": "e624cf88-806e-48e2-b963-7fce119d1beb",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        5140,
+        980
+      ],
+      "id": "e53d5b2a-f9b1-4198-b9d4-edd3f30f3921",
+      "name": "MCP Client"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        4880,
+        740
+      ],
+      "id": "c439a3a8-de07-4f04-8533-0de4c1e7e99e",
+      "name": "Wait",
+      "webhookId": "ee596776-f106-4d25-a77c-4d3e0882e14c"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "subreddit": "={{ $json.display_name }}",
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [
+        2220,
+        900
+      ],
+      "id": "a8c649b2-b5e7-486b-88d5-3b2b481d1584",
+      "name": "Reddit8",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "el0E8uw1jVS2fbll",
+          "name": "Reddit account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        5480,
+        860
+      ],
+      "id": "822b33a8-9dac-4618-9c2f-9c685ce6b0ae",
+      "name": "Wait17",
+      "webhookId": "f94ae54e-16e5-44ae-85b7-9c46a7554a37"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items[0].json.data.children.map(child => {\n  return {\n    json: {\n      display_name: child.data.display_name\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        720
+      ],
+      "id": "ea7f3f8a-13cd-4203-8f23-da70454fd91d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "url": "https://oauth.reddit.com/subreddits/mine/subscriber",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "redditOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        720
+      ],
+      "id": "2f1df8b6-e700-45d7-9ba7-dc880edd5f00",
+      "name": "Get Subreddits",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "el0E8uw1jVS2fbll",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1820,
+        720
+      ],
+      "id": "c14f0fe7-8757-430a-81fb-a64f97526775",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "08ca2f2c-61a4-47b1-ae2c-3a8fe26b5ea7",
+              "name": "subreddit",
+              "value": "={{ $json.subreddit }}",
+              "type": "string"
+            },
+            {
+              "id": "f2841c0e-b1b5-4867-87ec-9d513543362a",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "357dfb78-e499-4a47-8f9f-8709ae4150ef",
+              "name": "selftext",
+              "value": "={{ $json.selftext }}",
+              "type": "string"
+            },
+            {
+              "id": "8638fdaf-9d54-423b-8228-fad091729bdc",
+              "name": "permalink",
+              "value": "=https://reddit.com{{ $json.permalink }}",
+              "type": "string"
+            },
+            {
+              "id": "07a7a34c-8374-4837-8b83-170e46e3636d",
+              "name": "author",
+              "value": "={{ $json.author }}",
+              "type": "string"
+            },
+            {
+              "id": "25590359-be59-47f6-83fe-8f21905576c0",
+              "name": "created_utc",
+              "value": "={{ $json.created_utc }}",
+              "type": "number"
+            },
+            {
+              "id": "16119366-2e6d-48d5-97b5-fcfe0fd7061a",
+              "name": "post_content",
+              "value": "={{ $json.selftext }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2420,
+        920
+      ],
+      "id": "5f74cbd6-f876-42e3-9966-0c7adb1ee43e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2040,
+        800
+      ],
+      "id": "9586f881-091c-4a81-ab5b-0f1194d9549b",
+      "name": "Wait1",
+      "webhookId": "b691f6fc-5416-48f0-b12d-5f0d0aa9447c"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "youtube_videos",
+          "mode": "list",
+          "cachedResultName": "youtube_videos"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        4520,
+        740
+      ],
+      "id": "49958af7-1a15-4f26-b245-f61006b0f96d",
+      "name": "Get Video Lists",
+      "credentials": {
+        "postgres": {
+          "id": "EYmLMyd0530y8qkY",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1100,
+        720
+      ],
+      "id": "b7e9a68f-3315-42b5-be7f-a2c61a1744a7",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f9968364-ae3a-4f9e-954e-90b2a2513679",
+              "leftValue": "={{ new Date($json.created_utc * 1000).toISOString() }}\n",
+              "rightValue": "={{ new Date(Date.now() - 43200000).toISOString() }}\n",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            },
+            {
+              "id": "2480ccf7-b49e-4cf7-8fff-d5b88055d011",
+              "leftValue": "={{ $json.selftext }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "name": "Filter (Last 12 hours)",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        2780,
+        680
+      ],
+      "typeVersion": 2.2,
+      "id": "289ca2f3-a67e-4aaf-8584-143605346de1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "reddit",
+          "mode": "list",
+          "cachedResultName": "reddit"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "is_good": false,
+            "id": "={{ $('If Not Exist - Push To DB').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "post_date",
+              "displayName": "post_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "post_reply",
+              "displayName": "post_reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "replied",
+              "displayName": "replied",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "post_content",
+              "displayName": "post_content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "post_user",
+              "displayName": "post_user",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "is_good",
+              "displayName": "is_good",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sub_reddit",
+              "displayName": "sub_reddit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "replied_date",
+              "displayName": "replied_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        5700,
+        980
+      ],
+      "id": "a710dbdd-c608-448b-8163-975d55f3946e",
+      "name": "Update Post Reply1",
+      "credentials": {
+        "postgres": {
+          "id": "EYmLMyd0530y8qkY",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "reddit",
+          "mode": "list",
+          "cachedResultName": "reddit"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "replied": false,
+            "url": "={{ $('Loop Over Items').item.json.permalink }}",
+            "title": "={{ $('Loop Over Items').item.json.title }}",
+            "post_user": "={{ $('Loop Over Items').item.json.author }}",
+            "post_content": "={{ $('Loop Over Items').item.json.selftext || null }}",
+            "sub_reddit": "={{ $('Loop Over Items').item.json.subreddit }}",
+            "post_date": "={{ new Date($('Loop Over Items').item.json.created_utc * 1000).toISOString() }}",
+            "is_good": false
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "post_date",
+              "displayName": "post_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "post_reply",
+              "displayName": "post_reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "replied",
+              "displayName": "replied",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "post_content",
+              "displayName": "post_content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "post_user",
+              "displayName": "post_user",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "is_good",
+              "displayName": "is_good",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sub_reddit",
+              "displayName": "sub_reddit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        4220,
+        960
+      ],
+      "id": "c17ba6c0-ff02-4d3c-9cb7-1f20c75968f5",
+      "name": "If Not Exist - Push To DB1",
+      "credentials": {
+        "postgres": {
+          "id": "EYmLMyd0530y8qkY",
+          "name": "Postgres account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Get Subreddits and Posts",
+        "height": 540,
+        "width": 1320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        620
+      ],
+      "id": "97c54241-5c45-49de-8320-daec6058c597",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Check If Good Post & Push To DB",
+        "height": 460,
+        "width": 760,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3660,
+        660
+      ],
+      "id": "b32214ed-c98e-4ee7-91a9-2a5fc0573058",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Filter Posts & Check if Exists\n",
+        "height": 320,
+        "width": 800,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2740,
+        620
+      ],
+      "id": "884f50a4-523f-4a7c-afd3-fe51aa9f708a",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Create Post Reply & Update DB",
+        "height": 540,
+        "width": 1760,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4480,
+        680
+      ],
+      "id": "ba09468a-c288-4f3b-b306-4c375f99bddd",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2025-06-04T18:00:05.011-04:00",
+          "Readable date": "June 4th 2025, 6:00:05 pm",
+          "Readable time": "6:00:05 pm",
+          "Day of week": "Wednesday",
+          "Year": "2025",
+          "Month": "June",
+          "Day of month": "04",
+          "Hour": "18",
+          "Minute": "00",
+          "Second": "05",
+          "Timezone": "America/New_York (UTC-04:00)"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Check If Exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Check If Post Is Good",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Exists": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Not Exist - Push To DB": {
+      "main": [
+        [
+          {
+            "node": "Get Video Lists",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Check If Post Is Good",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Check If Post Is Good",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Post Is Good": {
+      "main": [
+        [
+          {
+            "node": "If Not Exist - Push To DB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If Not Exist - Push To DB1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Create Post Reply",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Post Is Good": {
+      "main": [
+        [
+          {
+            "node": "If Post Is Good",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Post Reply": {
+      "main": [
+        [
+          {
+            "node": "Update Post Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Post Reply": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Create Post Reply",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "Create Post Reply",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Create Post Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reddit8": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait17": {
+      "main": [
+        [
+          {
+            "node": "Update Post Reply1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Subreddits": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Filter (Last 12 hours)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Reddit8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video Lists": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Subreddits",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter (Last 12 hours)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Post Reply1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Not Exist - Push To DB1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1b947f31-afdf-48c6-90b2-f895f97baf62",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c7f361045f0d1dcaa3155522e33ba729e76cd0c57bb645df4ea7939607391aaa"
+  },
+  "id": "cFXyOHXt0hEb2l0Z",
+  "tags": [
+    {
+      "createdAt": "2025-05-19T21:32:30.943Z",
+      "updatedAt": "2025-05-19T21:32:30.943Z",
+      "id": "w7J1MmOAy7oM2edC",
+      "name": "Social"
+    }
+  ]
+}

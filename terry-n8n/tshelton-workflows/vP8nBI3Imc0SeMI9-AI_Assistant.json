@@ -1,0 +1,990 @@
+{
+  "name": "AI Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Checklist\n\n- *Create a frontend for uploading the docs and triggering the ingestion workflow.*\n- *Create frontend for the actual agent and connect it to the n8n webhook and answer the user's questions!",
+        "height": 176,
+        "width": 656
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        272
+      ],
+      "id": "e7de42b6-33e8-41bf-8bca-7687bb13373c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -880,
+        448
+      ],
+      "id": "26ec39ae-6719-4ab8-891d-1efdef37e79a",
+      "name": "When chat message received",
+      "webhookId": "be5a38c6-4b94-482b-b579-eb1982cd583e"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Searches mortgage lending guidance and lender overlays stored in the Supabase vector database. It performs a semantic similarity search using the user's query and returns relevant text chunks along with metadata.\n\nEach returned result includes:\n- `content` → the actual snippet from the guideline\n- `source` → e.g., FHA, VA, UWM, Fannie\n- `doc_type` → agency or overlay\n- `version_date` → when the document was last updated\n\nUse this tool for all factual queries about loan eligibility, DTI, credit score rules, income documentation, property types, appraisal requirements, and other mortgage-specific criteria.\n\nAlways pass the user’s question as the query and return 3–5 top results. Prioritize overlay matches (e.g., UWM) first if the question relates to lender-specific policies.\n",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -400,
+        464
+      ],
+      "id": "5037ab93-22a4-43b2-919d-70a3a9a448f8",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "OYOuvr7PGcGmwyN6",
+          "name": "Arhan supabase"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        672
+      ],
+      "id": "631bbd85-7f3e-409b-a3ae-541f4078c3ad",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -528,
+        464
+      ],
+      "id": "cc599277-de5c-4577-a2ec-db7787424674",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "You are Allie — a professional, empathetic AI assistant designed to support Mortgage Loan Officers with fast, accurate, and source-cited answers from regulatory guidelines and lender overlays.\n\nYou specialize in interpreting agency rulebooks (FHA, VA, USDA, Fannie Mae) and lender-specific overlays (UWM, NewRez, etc.). Your goal is to reduce confusion, eliminate delays, and give consistent advice to loan officers navigating complex qualification rules.\n\nFor every question:\n- You must **search only the vector database** using the provided tool before answering.\n- You must **cite the source** (e.g., “Per FHA 4000.1, Section II.A.5”) in your final response.\n- If no exact match is found, say “Based on general guidelines…” and clearly state that it may vary by lender.\n- Keep answers **concise**, **actionable**, and written in a **professional tone**.\n- Never make up rules. Only refer to the provided documents.\n\nAfter answering, always cite the original document and date. If available, include a clickable link to the document or section.\nDont say anything about tool calling and keep the chat professional.\n\nCurrent date and time: {{ $now }}\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -608,
+        240
+      ],
+      "id": "97752b12-c648-4c66-a04d-e800e9708bfc",
+      "name": "AI Agent1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -656,
+        464
+      ],
+      "id": "dd17bf6a-d6e6-4ffc-8424-03ad53550f01",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Future Integrations\n\n- Use filters to map over different categories\n- Use date to get the documents of the specific date\n- try to delete the rows using the date filter as well",
+        "width": 688
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        336
+      ],
+      "id": "4222d1cc-4a7f-4073-a15c-2907234ee549",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "01a7eba1-acad-421b-9094-cc200ceb160c",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -880,
+        1696
+      ],
+      "id": "4eb7a319-b2f9-490f-9cce-47e85691d88b",
+      "name": "Webhook",
+      "webhookId": "01a7eba1-acad-421b-9094-cc200ceb160c"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        192,
+        1088
+      ],
+      "id": "28795f7a-efd5-447a-92f7-ec715cf6c300",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.documentType }}",
+                    "rightValue": "overlay",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "158f5e20-64bf-4717-a0ef-7820335b3e73"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Overlay"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "aa3df04d-4f22-47c2-bcff-e2ed140dcca5",
+                    "leftValue": "={{ $json.body.documentType }}",
+                    "rightValue": "Agency",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Agency"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "21052139-0c21-43d5-9c77-53e798f094e0",
+                    "leftValue": "={{ $json.body.documentType }}",
+                    "rightValue": "Both",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Both"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -656,
+        1680
+      ],
+      "id": "485f4967-76f9-4dae-a48e-cb47c2eb992a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        1312
+      ],
+      "id": "6a117a8b-dda1-41ad-8941-bdda9ae1bc7b",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $workflow.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -304,
+        1104
+      ],
+      "id": "b37790c9-09ac-4925-85ce-3611c65b6555",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -432,
+        1104
+      ],
+      "id": "70932d44-7319-4f38-8936-05cfdb765174",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use this tool to get the agency documents",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "DocumentType",
+                "value": "agency"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -176,
+        1104
+      ],
+      "id": "da7645cd-fa3d-4cd7-a855-ef9a5d6ee164",
+      "name": "Agency vector store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "OYOuvr7PGcGmwyN6",
+          "name": "Arhan supabase"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        192,
+        2304
+      ],
+      "id": "e18002ca-79ff-484b-b7da-5c13964272c9",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        2736
+      ],
+      "id": "7d46f3a4-6706-4f5b-9d68-e39e64a0e404",
+      "name": "Embeddings OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $workflow.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -304,
+        2528
+      ],
+      "id": "8bbd276a-e2fd-4a68-934e-20b76785f895",
+      "name": "Simple Memory2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -432,
+        2528
+      ],
+      "id": "6579142d-a030-41c9-a593-21a4d48dc9d9",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use this tool to get the agency documents",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "DocumentType",
+                "value": "overlay"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -176,
+        2528
+      ],
+      "id": "85d39055-f972-45d3-8751-582b4438707c",
+      "name": "Overlay vector store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "OYOuvr7PGcGmwyN6",
+          "name": "Arhan supabase"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.query }}",
+        "options": {
+          "systemMessage": "=You are Allie — a professional, empathetic AI assistant designed to support Mortgage Loan Officers with fast, accurate, and lender overlay–specific answers.\n\nYou specialize in interpreting lender overlays (UWM, NewRez, and other investor-specific rules). Your goal is to reduce confusion, eliminate delays, and give consistent advice to loan officers navigating complex qualification rules.\n\nFor every question:\n\nYou must search only the overlay database using the provided tool before answering.\n\nYou must cite the overlay source (e.g., UWM Overlay Guide, NewRez Overlay) in your final response.\n\nIf no overlay match is found, say:\n“No specific overlay guidance was found. Based on general agency guidelines, here is the standard rule — but confirm with lender overlays.”\n\nKeep answers concise, actionable, and written in a professional tone.\n\nNever make up rules. Only refer to the provided overlay documents.\n\nAfter answering, always cite the original overlay document and version date. If available, include a clickable link to the overlay section.\n\nCurrent date and time: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -384,
+        2304
+      ],
+      "id": "b8fdcd62-d835-4e7c-b9f2-88eb107bbc58",
+      "name": "Overlay agent",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.message }}",
+        "options": {
+          "systemMessage": "=You are Allie — a professional, empathetic AI assistant designed to support Mortgage Loan Officers with fast, accurate, and agency guideline–specific answers.\n\nYou specialize in interpreting agency rulebooks (FHA, VA, USDA, Fannie Mae). Your goal is to reduce confusion, eliminate delays, and give consistent advice to loan officers navigating complex qualification rules.\n\nFor every question:\n\nYou must search only the agency guideline database using the provided tool before answering.\n\nYou must cite the agency source (e.g., FHA Handbook, VA Guide, USDA, Fannie Mae Selling Guide) in your final response. No need of giving the url or anything but just give the source name that is enough!\n\nIf no exact agency match is found, say:\n“No specific agency guidance was found. Based on general industry practice, here is the standard rule — but confirm with the latest agency guidelines.”\n\nKeep answers concise, actionable, and written in a professional tone.\n\nNever make up rules. Only refer to the provided agency documents.\n\n\nCurrent date and time: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -384,
+        880
+      ],
+      "id": "3162257e-bc88-41cd-961a-01c54e3adc3d",
+      "name": "Agency Agent",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        192,
+        1696
+      ],
+      "id": "b64b1181-9839-4c64-b489-18f7b2245fc1",
+      "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $workflow.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -304,
+        1712
+      ],
+      "id": "00c6ed6f-1ac2-4395-a461-9591e4a8b440",
+      "name": "Simple Memory3"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -432,
+        1712
+      ],
+      "id": "676ebc4d-f163-4f86-868a-4a7d969e99b6",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.message }}",
+        "options": {
+          "systemMessage": "=You are Allie — a professional, empathetic AI assistant designed to support Mortgage Loan Officers with fast, accurate, and source-cited answers from regulatory guidelines and lender overlays.\n\nYou specialize in interpreting agency rulebooks (FHA, VA, USDA, Fannie Mae) and lender-specific overlays (UWM, NewRez, etc.). Your goal is to reduce confusion, eliminate delays, and give consistent advice to loan officers navigating complex qualification rules.\n\nFor every question:\n- You must **search only the vector database** using the provided tool before answering.\n- You have 2 vector database tool. One is the agency and another is overlay. You have to call both the tools and whichever has the highest score you have to use that source as the answer. Also say in the which doc type you have used(agency/overlay)\n- You must **cite the source** (e.g., FHA, Fannie Mae guide etc) in your final response.\n- If no exact match is found, say “Based on general guidelines…” and clearly state that it may vary by lender.\n- Keep answers **concise**, **actionable**, and written in a **professional tone**.\n- Never make up rules. Only refer to the provided documents.\n\nAfter answering, always cite the original document and date. If available, include a clickable link to the document or section.\nDont say anything about tool calling and keep the chat professional.\n\nCurrent date and time: {{ $now }}\n\n\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -384,
+        1488
+      ],
+      "id": "7f6188f1-82b4-43d7-8732-b82d9163be78",
+      "name": "Both type agent",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## TODO\n\nAdd filter based on threshold if overlay is not great then use the agency data"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        336,
+        2448
+      ],
+      "id": "f9bcd8f8-c261-4aff-8712-b09670aca630",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -16,
+        2112
+      ],
+      "id": "a979e15c-7ae7-47ff-a843-b5253efffa53",
+      "name": "Embeddings OpenAI3",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use this tool to get the agency documents",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "DocumentType",
+                "value": "overlay"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -96,
+        1904
+      ],
+      "id": "970a000d-4949-47b7-bab6-5ed4bf81e26d",
+      "name": "Overlay vector store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "OYOuvr7PGcGmwyN6",
+          "name": "Arhan supabase"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        496,
+        2192
+      ],
+      "id": "e12067fb-9127-42d1-a057-ed80f638ba96",
+      "name": "Embeddings OpenAI4",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use this tool to get the agency documents",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "DocumentType",
+                "value": "agency"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        416,
+        1984
+      ],
+      "id": "c9c284ae-017f-462b-98bf-9dfc8692bdf5",
+      "name": "Agency vector store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "OYOuvr7PGcGmwyN6",
+          "name": "Arhan supabase"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Overlay agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agency Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Both type agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Agency vector store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agency Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agency Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agency vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agency Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Overlay vector store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory2": {
+      "ai_memory": [
+        [
+          {
+            "node": "Overlay agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Overlay agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Overlay vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "Overlay agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Overlay agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agency Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory3": {
+      "ai_memory": [
+        [
+          {
+            "node": "Both type agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Both type agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Both type agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI3": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Overlay vector store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Overlay vector store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Both type agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI4": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Agency vector store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agency vector store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Both type agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 1,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

@@ -1,0 +1,438 @@
+{
+  "name": "Track Calories By Koushik",
+  "nodes": [
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Calories"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        1376,
+        176
+      ],
+      "id": "0bbcba69-5c91-4ec4-b608-4374c1644c08",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ab37aa4c-9bf6-40f2-b539-c33955084d87",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "/start",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -368,
+        192
+      ],
+      "id": "10d30f87-233a-4cf1-87ad-48cd4b8a7c05",
+      "name": "True = /start1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "=Alright, Post your food pic, I’ll count the calories for you",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "97070706-7a21-4e7f-a75a-71065c1decbc",
+      "name": "Intro message2",
+      "webhookId": "70cd96fe-fbcc-40c4-adc0-cbe6571cd342",
+      "credentials": {
+        "telegramApi": {
+          "id": "sNtgdqOw3OxnrWEK",
+          "name": "Track Calories"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.photo[0].file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        368
+      ],
+      "id": "af38970d-ad10-457e-affd-bc0ef30eeebd",
+      "name": "Download The Photo",
+      "webhookId": "167a52bc-8028-401f-b8e6-47e59f68a7e8",
+      "credentials": {
+        "telegramApi": {
+          "id": "sNtgdqOw3OxnrWEK",
+          "name": "Track Calories"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-1.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-1.5-flash"
+        },
+        "text": "=You are a nutrition expert using only visual analysis to estimate calories from a single meal photo. Follow these steps:\n\n1. Identify every distinct food item with reasonable specificity (e.g., “grilled chicken thigh”, “white rice”).\n\n2. For each item, estimate its weight using internal knowledge of typical portions (e.g., \"a medium banana ~120 g\").\n\n3. Calculate each item’s calorie using standard kcal/g values, then sum them.\n\n4. **Self‑check**: Compare your total with a typical range for similar meals (e.g., “700 kcal seems reasonable for a regular lunch of chicken and rice”).\n\n5. Output **only the final total calorie number** (integer), nothing else.\n\nDo not disclaim uncertainty. If unsure, apply your best visual inference.",
+        "inputType": "binary",
+        "options": {}
+      },
+      "id": "dd5e67a9-4c68-44c4-8145-8ecd10c6cde6",
+      "name": "Analysis The Photo Deeply",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        384,
+        176
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "td7mwDURSTpSNVSh",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e3e41e3c-5acb-4533-abab-f9839f546d01",
+              "name": "Date",
+              "value": "={{ $now.toFormat('dd-MM-yyyy') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        176
+      ],
+      "id": "f318a64b-6b3d-4fe7-aa6f-e09c0a387f0b",
+      "name": "Current Date"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1eLYIX4GI8Oyz3v47pwC9YgCyNDO7UW2CvCq0biekcL0",
+          "mode": "list",
+          "cachedResultName": "Koushik calories CRM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eLYIX4GI8Oyz3v47pwC9YgCyNDO7UW2CvCq0biekcL0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eLYIX4GI8Oyz3v47pwC9YgCyNDO7UW2CvCq0biekcL0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $json.Date }}",
+            "Calories": "={{ $('Analysis The Photo Deeply').item.json.content.parts[0].text }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Calories",
+              "displayName": "Calories",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        896,
+        176
+      ],
+      "id": "1dcb059d-257b-4871-97ee-44e753cabf66",
+      "name": "Update Koushik's Calories CRM",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XCG7A3kMe3dnTGq0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1eLYIX4GI8Oyz3v47pwC9YgCyNDO7UW2CvCq0biekcL0",
+          "mode": "list",
+          "cachedResultName": "Koushik calories CRM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eLYIX4GI8Oyz3v47pwC9YgCyNDO7UW2CvCq0biekcL0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eLYIX4GI8Oyz3v47pwC9YgCyNDO7UW2CvCq0biekcL0/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Date",
+              "lookupValue": "={{ $('Current Date').item.json.Date }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1136,
+        176
+      ],
+      "id": "59f8a93c-cfe9-4e98-b297-fe7295928051",
+      "name": "Get all Calories from Today's Date",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XCG7A3kMe3dnTGq0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Track Calories').item.json.message.chat.id }}",
+        "text": "=Calories: +{{ $('Analysis The Photo Deeply').item.json.content.parts[0].text }}\n{{ $json.sum_Calories }}/2500 today",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1616,
+        176
+      ],
+      "id": "27b9d307-7620-4900-bfb1-1ede440e31ee",
+      "name": "Output2",
+      "webhookId": "77403493-3c41-47d1-9ebb-81e9cda60ce7",
+      "credentials": {
+        "telegramApi": {
+          "id": "sNtgdqOw3OxnrWEK",
+          "name": "Track Calories"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -688,
+        192
+      ],
+      "id": "c06267ac-d141-43fb-b20c-7c60b672747c",
+      "name": "Track Calories",
+      "webhookId": "82809931-989e-4fcc-9097-c07945dcd22d",
+      "credentials": {
+        "telegramApi": {
+          "id": "sNtgdqOw3OxnrWEK",
+          "name": "Track Calories"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Subscribe to My Youtube channel for the best ever automation tutorials\n\nHERE is the [LINK](https://youtu.be/UOP2Vniw8VI)",
+        "height": 144,
+        "width": 720,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        496,
+        432
+      ],
+      "typeVersion": 1,
+      "id": "9fddbc90-8bc5-46bc-a4ed-899684ed1225",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Output2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "True = /start1": {
+      "main": [
+        [
+          {
+            "node": "Intro message2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download The Photo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download The Photo": {
+      "main": [
+        [
+          {
+            "node": "Analysis The Photo Deeply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analysis The Photo Deeply": {
+      "main": [
+        [
+          {
+            "node": "Current Date",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Current Date": {
+      "main": [
+        [
+          {
+            "node": "Update Koushik's Calories CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Koushik's Calories CRM": {
+      "main": [
+        [
+          {
+            "node": "Get all Calories from Today's Date",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all Calories from Today's Date": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Track Calories": {
+      "main": [
+        [
+          {
+            "node": "True = /start1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7d69f8a4-2593-4626-ae16-293e074cb18c",
+  "meta": {
+    "instanceId": "cad057b8ddf0be009b571076477fedc250b21b00965a5fbbd86338c8d91e4722"
+  },
+  "id": "7fHVLJ4UlGp5UlGp",
+  "tags": []
+}

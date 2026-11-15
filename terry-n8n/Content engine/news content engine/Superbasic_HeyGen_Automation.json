@@ -1,0 +1,126 @@
+{
+  "name": "Superbasic HeyGen Automation",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        -40
+      ],
+      "id": "90459cb5-e390-4aa4-9d7a-bf3f2c32ab04",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.heygen.com/v2/video/generate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"video_inputs\": [\n    {\n      \"character\": {\n        \"type\": \"avatar\",\n        \"avatar_id\": \"b0e565b0070e4fbfb06727bab125a577\",\n        \"avatar_style\": \"normal\"\n      },\n      \"voice\": {\n        \"type\": \"text\",\n        \"input_text\": \"I am a cheeky man\",\n        \"voice_id\": \"ff15136c2a7f4d8290c5f685901b3c83\",\n        \"speed\": 1.1\n      }\n    }\n  ],\n  \"dimension\": {\n    \"width\": 1280,\n    \"height\": 720\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -180,
+        -40
+      ],
+      "id": "34be88ff-0439-4955-8689-cfb80543bd57",
+      "name": "Video Creator",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wjC4ty2HWijSMVV0",
+          "name": "HeyGen"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.heygen.com/v1/video_status.get",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "video_id",
+              "value": "={{ $json.data.video_id }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        20,
+        -40
+      ],
+      "id": "e273a0ff-03ea-4414-a40a-7c23e5f1a702",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "wjC4ty2HWijSMVV0",
+          "name": "HeyGen"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Video Creator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Creator": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d57e7779-b8eb-4ab9-92ef-4c0e7ebca16a",
+  "meta": {
+    "instanceId": "5e299a1c9534d3df40876524706c82a0adb5dc6203538ef644e25b7d869a117f"
+  },
+  "id": "iKmIqGnTZkA1A0fa",
+  "tags": []
+}

@@ -1,0 +1,10 @@
+{
+  "name": "installed-nodes",
+  "private": true,
+  "dependencies": {
+    "@mendable/n8n-nodes-firecrawl": "1.0.4",
+    "n8n-nodes-mallabe-images": "0.1.7",
+    "@tavily/n8n-nodes-tavily": "0.2.3",
+    "n8n-nodes-mcp": "0.1.29"
+  }
+}

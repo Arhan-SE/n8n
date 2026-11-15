@@ -1,0 +1,589 @@
+{
+  "name": "Search Image",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1PwTchwMEq5UR46EUdMBhDAz9ij6jaYR9ejtmgg2Mgs0",
+          "mode": "list",
+          "cachedResultName": "Marketing Team Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PwTchwMEq5UR46EUdMBhDAz9ij6jaYR9ejtmgg2Mgs0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PwTchwMEq5UR46EUdMBhDAz9ij6jaYR9ejtmgg2Mgs0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        96,
+        512
+      ],
+      "id": "367d7b2b-85c4-401b-8f56-338887a76973",
+      "name": "Image Database",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KaudmXrtRt25ceOa",
+          "name": "Arhan sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "intent"
+            },
+            {
+              "name": "image"
+            },
+            {
+              "name": "chatID"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -176,
+        256
+      ],
+      "id": "7dedb77a-b967-4b58-b034-d69cf0075493",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Overview\nYou are an Image Retrieval Agent. When the user provides a query, your task is to search the \"Image Database\" using the keywords from the query. Locate the most relevant matching image.\n\n## Output\n- Return the name, ID, and the Link of the image\n- If no image is found, output \"Not Found\"\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        96,
+        256
+      ],
+      "id": "a39876f2-41bb-46d7-9706-8b0ac63ac3e5",
+      "name": "Image Search Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "44c36e1d-19e8-4411-bd3d-86c5144ecb14",
+              "name": "response",
+              "value": "Image wasn't found in the database",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "a09cb4e4-ae96-41b9-a00a-ab8ffed02c94",
+      "name": "Not Found"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a5a9fd85-2403-423e-92a2-d3ba20db83d9",
+              "leftValue": "={{ $('When Executed by Another Workflow').first().json.intent }}",
+              "rightValue": "Get",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        256
+      ],
+      "id": "462d4df1-e71b-4d99-8f38-c4d57625d380",
+      "name": "Get?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "85e307aa-0bb8-40f1-b62e-5b36c231b0af",
+              "leftValue": "={{ $json.output.status }}",
+              "rightValue": "Not Found",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        256
+      ],
+      "id": "b611575e-2c3b-4cc5-a6d3-9d4c29f9feaf",
+      "name": "Not Found?"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.output.image_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1024,
+        256
+      ],
+      "id": "291a8593-39cc-45a4-89a8-1ca6e4a858a5",
+      "name": "Download File",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "IQIs0vHyUAFOl2Pj",
+          "name": "Drive Arhan"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Trigger\n",
+        "height": 260,
+        "width": 260,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        176
+      ],
+      "id": "c6a028b3-6f2f-4554-8340-f58d4fa60187",
+      "name": "Sticky Note5",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## Tool & Model",
+        "height": 200,
+        "width": 280,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        464
+      ],
+      "id": "440ca2ee-1b4a-41e3-a4e9-7fce117e798e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# Image Search\n",
+        "height": 260,
+        "width": 380,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        176
+      ],
+      "id": "9393bc93-01e0-4819-b610-203795eb1346",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Structured Output",
+        "height": 200,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        464
+      ],
+      "id": "33ff9540-3dfd-4c89-afdf-5defbd43a3b6",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"image_name\":\"string | null\",\n  \"image_id\": \"string | null\",\n  \"image_link\": \"string | null\",\n  \"status\": \"found | not_found\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        336,
+        544
+      ],
+      "id": "6bd109e5-3245-4e99-8e93-54d2a588935f",
+      "name": "Name, ID, & Link"
+    },
+    {
+      "parameters": {
+        "content": "# Not Found?",
+        "height": 260,
+        "width": 260,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        416,
+        176
+      ],
+      "id": "d89f6986-9c64-446b-a885-154dd25783a3",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 200,
+        "width": 180,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        -48
+      ],
+      "id": "d2f1ccbf-a84a-45e9-bd8a-4511465cbf6a",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Get?",
+        "height": 260,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        704,
+        176
+      ],
+      "id": "af2dfb4b-75cd-41b9-93d9-332408bcf190",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "be32fa20-d1e6-4831-a266-5991e5c4eb1e",
+              "name": "imageName",
+              "value": "={{ $json.output.image_name }}",
+              "type": "string"
+            },
+            {
+              "id": "10b5ddb9-a482-46a7-962f-8e18533d90d5",
+              "name": "imageID",
+              "value": "={{ $json.output.image_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1008,
+        496
+      ],
+      "id": "be3d3ab0-6d23-4cce-99b2-681c61cd13a7",
+      "name": "Edit"
+    },
+    {
+      "parameters": {
+        "content": "# Send Content",
+        "height": 260,
+        "width": 280,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        176
+      ],
+      "id": "2d0e5ca8-25db-4d73-a113-7080513fbf17",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "# Download\n",
+        "height": 260,
+        "width": 220,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        976,
+        176
+      ],
+      "id": "dd85965a-74b0-4317-867a-a81dbfc4a07a",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('When Executed by Another Workflow').item.json.chatID }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1296,
+        256
+      ],
+      "id": "351d2510-0219-49ce-82b4-2fda5854d2b7",
+      "name": "Send Photo",
+      "webhookId": "85dc0064-e5c5-45a9-91a5-60e5b2bc4f1e",
+      "credentials": {
+        "telegramApi": {
+          "id": "gzE5HATVPs5EoHWv",
+          "name": "Marketing Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 200,
+        "width": 180,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        976,
+        448
+      ],
+      "id": "d89a142c-04c0-465f-89ad-ef369cb2d6b2",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -48,
+        528
+      ],
+      "id": "2f349344-4643-4d6e-9701-0cd0e1a6c6b7",
+      "name": "gpt-4.1-mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "8wmhnCReoMM8tLYA",
+          "name": "Terry openai"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Note by Arhan...\n\n1. Add Telegram Credential\n2. Add Google Cloud Credential for sheets and google drive\n3. Create a spreadsheet in sheets (No need to do it if already done...)\n4. Create a folder in Google Drive (No need to do it if already done...)",
+        "height": 208,
+        "width": 496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -96
+      ],
+      "id": "8e875bdd-eab0-4fd9-864f-d4ddc2b0eb08",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "## Note by Arhan...\n\nGoogle Drive folder name: AI Image Generation\nGoogle sheets name: Marketing Team Log",
+        "height": 208,
+        "width": 496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        976,
+        688
+      ],
+      "id": "bf322643-3ab4-4a5b-8c15-d3656490a766",
+      "name": "Sticky Note11"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Image Database": {
+      "ai_tool": [
+        [
+          {
+            "node": "Image Search Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Image Search Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Search Agent": {
+      "main": [
+        [
+          {
+            "node": "Not Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get?": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Not Found?": {
+      "main": [
+        [
+          {
+            "node": "Not Found",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Send Photo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Name, ID, & Link": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Image Search Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt-4.1-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Image Search Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "910e41c5-c707-484d-8479-0cb7477737c9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "14e706d143b2d5df3dc974917169c153cf51d2ef1e03554e280d86324c49ed87"
+  },
+  "id": "bGYLv1A6clbKnCL0",
+  "tags": []
+}

@@ -1,0 +1,1297 @@
+{
+  "name": "Contractor Callout Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -200,
+        120
+      ],
+      "id": "c1088751-8a97-4d62-afbc-c56da6e749c1",
+      "name": "Whenever email is received",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6CkHyftlehrEbhij",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        -100
+      ],
+      "id": "94a38d24-930d-407f-93aa-0328126871b0",
+      "name": "Whenever message is received",
+      "webhookId": "a6a3e6b4-9bd1-458f-bf9b-237e7fef950e"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "941bbb6d-0611-4e1a-b7bd-ee6aa8d26354",
+      "name": "Look Up Tenant based on Email / Phone Number",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "GpZ84XdkT0YqWaYQ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        440,
+        0
+      ],
+      "id": "29ba6e29-f2df-4c18-8f13-58640e3b9c7d",
+      "name": "Look up Property based on Tenant",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "GpZ84XdkT0YqWaYQ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1100,
+        120
+      ],
+      "id": "9e17d4da-3c3e-4938-8f30-6de3f234b974",
+      "name": "Create Job Record in Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "GpZ84XdkT0YqWaYQ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2280,
+        0
+      ],
+      "id": "3296737a-5bd2-4fa1-b006-4c8be8736983",
+      "name": "Loop Over Each Contractor"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        660,
+        0
+      ],
+      "id": "f6c7a4fb-a38f-4d2e-8530-5193f5635422",
+      "name": "Look to see if Property has an Open Job",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "GpZ84XdkT0YqWaYQ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a52c5330-6863-472e-bd3d-c4617bedc5c9",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        0
+      ],
+      "id": "5e3c53da-3c44-43c7-bade-a7615b03146b",
+      "name": "Check if Open Job exists for Property"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1100,
+        -100
+      ],
+      "id": "6121a658-523b-42f2-8f17-ed554084eecd",
+      "name": "Update Job with New Message",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "GpZ84XdkT0YqWaYQ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ab4217b5-c3a5-4967-91ea-af1e89a3914a",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        20,
+        0
+      ],
+      "id": "fee5b17a-32bd-44de-a9a7-fb9a7c0b3d9f",
+      "name": "Reformat Email / Phone Number"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ab4217b5-c3a5-4967-91ea-af1e89a3914a",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1300,
+        0
+      ],
+      "id": "d555cce8-1ece-4a2b-985b-7d317208a8d1",
+      "name": "Set Message(s) to Analyze"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2480,
+        120
+      ],
+      "id": "a9cb0219-136d-4afd-8ee5-50317bf5981b",
+      "name": "Look Up Contractor",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "GpZ84XdkT0YqWaYQ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "messages": {
+          "values": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1460,
+        0
+      ],
+      "id": "b5665cb9-e13e-4859-bf20-aaadfed0c4cc",
+      "name": "Identify type(s) of job",
+      "credentials": {
+        "openAiApi": {
+          "id": "xW3AKHWPG8nLktpa",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "82720518-2ca7-4086-9123-e4331b673526",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2940,
+        120
+      ],
+      "id": "750d1e5c-3dcd-469c-9b62-c83332373af5",
+      "name": "If phone number on record"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        3560,
+        220
+      ],
+      "id": "2ce3d579-ab5f-4a96-9dbb-7b70b770bfaf",
+      "name": "Send WhatsApp Message",
+      "webhookId": "6d3912d8-a1b4-4864-a6d9-60684d1d17ae"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        3220,
+        220
+      ],
+      "id": "feb807b3-9e80-460b-9511-fa0c0855d1ef",
+      "name": "Send Email",
+      "webhookId": "d67828b6-ac6a-4766-b9a0-72458b95492e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6CkHyftlehrEbhij",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2700,
+        120
+      ],
+      "id": "81bb7533-8c0f-42d2-9ed9-643a2be3442e",
+      "name": "Add Contractor to Job",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "GpZ84XdkT0YqWaYQ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "86826c15-2dee-4547-ba6e-40e2051f543c",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1780,
+        0
+      ],
+      "id": "ee9b3b60-c6c0-4e55-aec3-2d52b28770c5",
+      "name": "Check if there are any identified issues"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2700,
+        560
+      ],
+      "id": "3a0d89c2-1db7-42de-bda3-9795fb9aa239",
+      "name": "Email Joshua to highlight unclassified issue received",
+      "webhookId": "6936b632-27c9-4404-8fd3-f5fd6d9aa53c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6CkHyftlehrEbhij",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1980,
+        580
+      ],
+      "id": "89217143-9ef1-4a5e-a4ac-2cac46a5a9db",
+      "name": "Wait 1 hr",
+      "webhookId": "5c59bb07-ba8d-436c-8db9-e2d614cb8786"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2200,
+        580
+      ],
+      "id": "6a0f3bf6-6090-46dd-ab44-f7f5175a796c",
+      "name": "Check if job is still unclassified",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "GpZ84XdkT0YqWaYQ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "96f6dc96-d19c-4235-860e-47ee10df8bf4",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2420,
+        580
+      ],
+      "id": "62ead8c2-0885-45ab-b5ea-97b7621e65a2",
+      "name": "If Job is still unclassified"
+    },
+    {
+      "parameters": {
+        "formTitle": "Confirm Job",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Can you do this job",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Yes"
+                  },
+                  {
+                    "option": "No"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What day you want to schedule the work for? ",
+              "fieldType": "date"
+            },
+            {
+              "fieldLabel": "What Time do you want to schedule the work for ",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "8:00am"
+                  },
+                  {
+                    "option": "8:30am"
+                  },
+                  {
+                    "option": "9:00am"
+                  },
+                  {
+                    "option": "8:30am"
+                  },
+                  {
+                    "option": "9:00 am"
+                  },
+                  {
+                    "option": "9:30am"
+                  },
+                  {
+                    "option": "10:00 am"
+                  },
+                  {
+                    "option": "10:30am"
+                  },
+                  {
+                    "option": "11:00 am"
+                  },
+                  {
+                    "option": "11:30am"
+                  },
+                  {
+                    "option": "12:00 pm"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "How do you quote for this job? (USD)",
+              "fieldType": "number",
+              "placeholder": "$"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -300,
+        1380
+      ],
+      "id": "f7d369df-bab8-4e2d-bb5d-f67863bb9374",
+      "name": "On form submission",
+      "webhookId": "43503f8d-57bb-4c91-a9d8-d5fe105a2f67"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        460,
+        1360
+      ],
+      "id": "6f41cc6e-aadd-4bf2-8fb5-b459c2f42e17",
+      "name": "Add Cost to Monthly Costs Sheet",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "GpZ84XdkT0YqWaYQ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        1360
+      ],
+      "id": "2f267d19-407c-4e1f-883e-e0a70cd9c8a5",
+      "name": "Update Job with Date, Time, Cost & Confirmation",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "GpZ84XdkT0YqWaYQ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        680,
+        1360
+      ],
+      "id": "44c2e33d-7ca2-4f6c-baf0-acf5dcff6ad8",
+      "name": "Check How Tenant Originally Contacted Us",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "GpZ84XdkT0YqWaYQ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c160957d-5ab2-4399-88b1-bf6c821e6e95",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        1360
+      ],
+      "id": "5fc26546-989c-45cb-84cb-a27cf3c25c60",
+      "name": "If Original Contact Over WhatsApp"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        1260
+      ],
+      "id": "e1a850e1-ed12-4572-bb0e-dbd239ba60d9",
+      "name": "Send Tenant Booking Confirmation over WhatsApp",
+      "webhookId": "a6d5d41d-1ef0-48c1-becc-62f20bb91e4f"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1120,
+        1460
+      ],
+      "id": "9eae7a36-0c27-4dce-8c9e-b5318e27e674",
+      "name": "Send Tenant Booking Confirmation over Email",
+      "webhookId": "ba6c5c98-2826-44bd-b719-7888abf5ffb4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6CkHyftlehrEbhij",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1420,
+        1360
+      ],
+      "id": "51c043e5-56b4-40ac-987e-af01411cf754",
+      "name": "Email Joshua to Confirm Booking",
+      "webhookId": "caceb6e0-a30c-40a5-9eaa-9f1c1d41477e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6CkHyftlehrEbhij",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "753e2482-ccea-439d-a470-e9f8a6f9f194",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        1380
+      ],
+      "id": "5d66adf0-3de4-46a6-a106-e0e63c8603ab",
+      "name": "If Contractor Accepts Job"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        1580
+      ],
+      "id": "90ace11b-17b5-4a86-8e19-a32a08a67abf",
+      "name": "Send Message to Joshua to Highlight Contractor Rejection",
+      "webhookId": "c92779f4-28b3-455b-b659-d8b298757ffa",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6CkHyftlehrEbhij",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Whenever email is received": {
+      "main": [
+        [
+          {
+            "node": "Reformat Email / Phone Number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Whenever message is received": {
+      "main": [
+        [
+          {
+            "node": "Reformat Email / Phone Number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Look Up Tenant based on Email / Phone Number": {
+      "main": [
+        [
+          {
+            "node": "Look up Property based on Tenant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Look up Property based on Tenant": {
+      "main": [
+        [
+          {
+            "node": "Look to see if Property has an Open Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Job Record in Airtable": {
+      "main": [
+        [
+          {
+            "node": "Set Message(s) to Analyze",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Each Contractor": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Look Up Contractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Look to see if Property has an Open Job": {
+      "main": [
+        [
+          {
+            "node": "Check if Open Job exists for Property",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Open Job exists for Property": {
+      "main": [
+        [
+          {
+            "node": "Update Job with New Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Job Record in Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Job with New Message": {
+      "main": [
+        [
+          {
+            "node": "Set Message(s) to Analyze",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reformat Email / Phone Number": {
+      "main": [
+        [
+          {
+            "node": "Look Up Tenant based on Email / Phone Number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Look Up Contractor": {
+      "main": [
+        [
+          {
+            "node": "Add Contractor to Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Identify type(s) of job": {
+      "main": [
+        [
+          {
+            "node": "Check if there are any identified issues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If phone number on record": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatsApp Message": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Each Contractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Each Contractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Contractor to Job": {
+      "main": [
+        [
+          {
+            "node": "If phone number on record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if there are any identified issues": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Each Contractor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 1 hr",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 1 hr": {
+      "main": [
+        [
+          {
+            "node": "Check if job is still unclassified",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if job is still unclassified": {
+      "main": [
+        [
+          {
+            "node": "If Job is still unclassified",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Job is still unclassified": {
+      "main": [
+        [
+          {
+            "node": "Email Joshua to highlight unclassified issue received",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "If Contractor Accepts Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Job with Date, Time, Cost & Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Add Cost to Monthly Costs Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Cost to Monthly Costs Sheet": {
+      "main": [
+        [
+          {
+            "node": "Check How Tenant Originally Contacted Us",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check How Tenant Originally Contacted Us": {
+      "main": [
+        [
+          {
+            "node": "If Original Contact Over WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Original Contact Over WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Send Tenant Booking Confirmation over WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Tenant Booking Confirmation over Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Tenant Booking Confirmation over WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Email Joshua to Confirm Booking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Tenant Booking Confirmation over Email": {
+      "main": [
+        [
+          {
+            "node": "Email Joshua to Confirm Booking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Contractor Accepts Job": {
+      "main": [
+        [
+          {
+            "node": "Update Job with Date, Time, Cost & Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Message to Joshua to Highlight Contractor Rejection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d7862d2f-057f-4c11-9162-7671b2b838ad",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3d279e2d5b6b5a11dfebabd1983cabc8c3e6cdeae4fe75ff3d921ae884248b2e"
+  },
+  "id": "MiQDicnkhpJvE9xp",
+  "tags": []
+}

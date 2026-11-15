@@ -1,0 +1,28 @@
+{
+  "name": "CheckList",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Checklist\n\n- *Create a frontend for uploading the docs and triggering the ingestion workflow.*\n- *Create frontend for the actual agent and connect it to the n8n webhook and answer the user's questions!\n- Create an admin panel for data ingestion\n- Create assistant panel",
+        "height": 192,
+        "width": 656
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        528,
+        128
+      ],
+      "id": "82f6e00b-14ca-4ea9-aa48-aa9618bf31a2",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

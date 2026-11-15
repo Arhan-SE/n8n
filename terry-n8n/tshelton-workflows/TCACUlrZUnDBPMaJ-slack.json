@@ -1,0 +1,169 @@
+{
+  "name": "slack",
+  "nodes": [
+    {
+      "parameters": {
+        "trigger": [
+          "message",
+          "app_mention"
+        ],
+        "channelId": {
+          "__rl": true,
+          "value": "C09C7NGL1T6",
+          "mode": "list",
+          "cachedResultName": "ai-agent-1"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3c48c5c3-3a3a-44ad-a08c-c1e7321e6cea",
+      "name": "Slack Trigger",
+      "webhookId": "119e83bd-79a4-4975-98f9-2491ee43be2d",
+      "credentials": {
+        "slackApi": {
+          "id": "0GlNz7rdRryaMABD",
+          "name": "Arhan Slack"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09C7NGL1T6",
+          "mode": "list",
+          "cachedResultName": "ai-agent-1"
+        },
+        "text": "={{ $json.output }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        560,
+        0
+      ],
+      "id": "f9d39220-aafb-4c84-8272-928d6eaed3fa",
+      "name": "Send a message",
+      "webhookId": "32680d65-fedc-4fec-801a-6aa8447c47cd",
+      "credentials": {
+        "slackApi": {
+          "id": "0GlNz7rdRryaMABD",
+          "name": "Arhan Slack"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Slack Trigger').item.json.blocks[0].elements[0].elements[0].user_id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        420,
+        220
+      ],
+      "id": "35111f88-9bcc-411a-813a-a581b2cf7ae2",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.blocks[0].elements[0].elements[1].text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        240,
+        0
+      ],
+      "id": "42f3d7a1-0fec-45dd-a221-25bfd8559bdd",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        280,
+        220
+      ],
+      "id": "d4d88153-5ff5-4fe4-b98d-24fd54a4a2a4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "lgop4pevUeRAD6bO",
+          "name": "Gemini Arhan"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Slack Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 1,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

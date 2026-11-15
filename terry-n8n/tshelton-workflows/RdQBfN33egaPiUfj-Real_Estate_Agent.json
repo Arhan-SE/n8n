@@ -1,0 +1,1091 @@
+{
+  "name": "Real Estate Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -224,
+        208
+      ],
+      "id": "33df1f37-01e0-4180-a6bc-6b11abe02eb2",
+      "name": "When chat message received",
+      "webhookId": "9e145fab-d241-420c-92eb-181d84b22789"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        128,
+        432
+      ],
+      "id": "bc608c17-fe12-4418-a5bf-18f863a835c5",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "This tool researches customer interests, finds matching properties, sends a personalized email, and logs the details.",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=Role:\n\nYou are a property recommender agent!\nYou recommend properties to your customer using the following tools that you have, based on their interest and the budget.\n\nTOOLS:\n1. Get best properties: Use this tool to get the best properties. It will search the db for the available properties as well the user interest and budget.\n\n2. Create an send email tool: Use this tool to create as well as send the email with HTML formatting!\n\nChecklist:\n- First call the Get best properties tool and get all the customer and recommended property details.\n- Send all the data that is generated from the Get best properties tool to the Create an send email tool, all the data that it is generated and then it will create and send the email automatically!"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        432
+      ],
+      "id": "50e9fbea-329f-4de5-b1ac-b3ae1cc14931",
+      "name": "Drafting Offer Agent"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg",
+          "mode": "list",
+          "cachedResultName": "uae_properties_updated",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1656736742,
+          "mode": "list",
+          "cachedResultName": "Properties",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg/edit#gid=1656736742"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Availability / Status",
+              "lookupValue": "Available"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        848
+      ],
+      "id": "f16ee9be-bee2-485a-892d-173f24a7d7b8",
+      "name": "Available Properties",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7Mt86Piy6Le1vak5",
+          "name": "Arhan sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        752
+      ],
+      "id": "0818d11d-7f0f-4fdf-a2df-38a082a7e585",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "lgop4pevUeRAD6bO",
+          "name": "Gemini Arhan"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        0,
+        432
+      ],
+      "id": "b3ecd068-2c8d-4c1a-94df-42a5c08c1cda",
+      "name": "Google Gemini Chat Model5",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "lgop4pevUeRAD6bO",
+          "name": "Gemini Arhan"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        640
+      ],
+      "id": "fc59294c-6ab7-4578-8fc0-3446fc5c638b",
+      "name": "Google Gemini Chat Model8",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "lgop4pevUeRAD6bO",
+          "name": "Gemini Arhan"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Always use this tool to send the market research to the admin",
+        "sendTo": "mdadiliqbal034@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', `The subject of the Research`, 'string') }}",
+        "message": "={{ $fromAI('Message', \"The HTML body with the researched insights\", 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1296,
+        640
+      ],
+      "id": "dc98c5c1-f338-4a5d-8fc3-918e3a4ebaf5",
+      "name": "Send Researched Email",
+      "webhookId": "c2d601e3-1dfe-47c0-bf1c-81d785186b34",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "P8NnEWN3J0gNiJjF",
+          "name": "Arhan Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {
+          "topic": "news",
+          "search_depth": "basic",
+          "days": 3,
+          "include_answer": "advanced",
+          "include_images": true
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        640
+      ],
+      "id": "0a6e8883-5df5-4e86-a300-306c2b6e3e16",
+      "name": "News Tavily Tool",
+      "credentials": {
+        "tavilyApi": {
+          "id": "qFv4eIo7ZusQjBAZ",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {
+          "topic": "general",
+          "search_depth": "advanced",
+          "max_results": 5,
+          "days": 3,
+          "include_images": true
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        1552,
+        640
+      ],
+      "id": "2ed1422d-d7a1-4415-aab2-eff8f5417ca5",
+      "name": "General Tavily Tool",
+      "credentials": {
+        "tavilyApi": {
+          "id": "qFv4eIo7ZusQjBAZ",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {
+          "topic": "finance",
+          "search_depth": "advanced",
+          "days": 3,
+          "include_answer": "basic",
+          "include_images": true
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        640
+      ],
+      "id": "3ca60d5a-780f-4d60-9f4d-071d8b55c6ef",
+      "name": "Finance Tavily tool",
+      "credentials": {
+        "tavilyApi": {
+          "id": "qFv4eIo7ZusQjBAZ",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "=### 🧠 **Role**\n\nYou are **Estagent**, the intelligent assistant supporting a senior real estate agent.\n\nYour only responsibility is to **delegate tasks** to the appropriate agent tool — either the **Draft Agent Tool** or the **Real Estate Market Research Agent Tool** — depending on the user’s request.\n\nYou do **not** perform any reasoning, property lookup, market research, or content generation yourself.\n\n---\n\n### 🛠️ **Tools**\n\n#### 📨 **Draft Agent Tool**\n\nThis tool manages the full email workflow by fetching customer data, retrieving listings, generating personalized emails, and sending them to customers whenever the admin wants to share property suggestions.\n---\n\n#### 📊 **Real Estate Market Research Agent Tool**\n\nThis tool conducts market research (using Tavily News, Finance, or General Research under the hood).\nAfter research is complete, it **must always call the Draft Agent Tool to send an email** with the research results.\nEven if research fails or no results are found, an email is still sent with the message:\n\n---\n\n#### CRM Agent\n\nUse this tool to get the information about the customer/leads like their interest, budget, email etc\n\n### 📏 **Rules**\n\n* ✅ Delegate only:\n\n  * Property suggestions → **Draft Agent Tool**\n  * Market research → **Research Agent Tool**\n\n* 🧾 Never create content yourself — tools handle everything.\n\n* 🔎 No reasoning or data handling — just pass intent.\n\n* 📩 Email is mandatory:\n\n  * **Draft Agent Tool** always sends.\n  * **Research Agent Tool** must call **Draft Agent Tool** after research to send.\n\n* 🛑 Use one tool at a time, except in research → then email.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        208
+      ],
+      "id": "957e3dd9-7b23-493b-8d74-3f4f471a13e1",
+      "name": "Estagent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Research Agent who does crazy research",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=You are the professional senior research agent\n\nYour goal is to use your tools, get the information from them and email it to the user.\n\nYou have the following tools\n\n - General Tavily Tool: Use this tool to get the general research on the Admin's query/topic\n\n - News Tavily Tool: Use this tool to get the news based research on the Admin's query/topic\n\n - Finance Tavily Tool: Use this tool to get the Finance based research on the Admin's query/topic\n\n - Send Email tool: Use this tool to send the research via email\n\n\n- Add Research To DB tool: Use this tool to save the logs of the research on sheets. This step should be done once you get all the research done!\n\n***IMPORTANT***\n- The email should be in HTML format\n- You have to always send the email with the research\n- You have to send the email as well as log the research using the Add Research To DB tool.\n- Todays date/time: {{ $today }}\n- Only use multiple tavily tools if required."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        1408,
+        432
+      ],
+      "id": "8ae78d3a-2676-4bb7-a6bb-f9cb5cec72fe",
+      "name": "Research Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2064,
+        640
+      ],
+      "id": "d10f1854-b905-4c08-8da5-da9d3f376d23",
+      "name": "Google Gemini Chat Model9",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "lgop4pevUeRAD6bO",
+          "name": "Gemini Arhan"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "AI Agent which has all the leads data",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', `The task of the admin`, 'string') }}",
+        "options": {
+          "systemMessage": "=You are an ai assistant which has all the information about the customers of your Admin.\n\nThese are the tools that you have:\n\nleads tool: use this tool to get all the details about the leads such as their email, interest, budget etc\n\nproperties tool: Use this tool to get all the properties that the admin has!\n\n\nAnswer the admin's queries and give them the best response.. Always hit the tools that you have!"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        2336,
+        432
+      ],
+      "id": "3c990fee-1dab-4a97-890c-423e0bdc1294",
+      "name": "CRM Agent"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg",
+          "mode": "list",
+          "cachedResultName": "uae_properties_updated",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1288455813,
+          "mode": "list",
+          "cachedResultName": "Customer Details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg/edit#gid=1288455813"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        2320,
+        640
+      ],
+      "id": "bc275f84-51bc-4647-935e-4d62875fb0bd",
+      "name": "Customer Details1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7Mt86Piy6Le1vak5",
+          "name": "Arhan sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg",
+          "mode": "list",
+          "cachedResultName": "uae_properties_updated",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1656736742,
+          "mode": "list",
+          "cachedResultName": "Properties",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg/edit#gid=1656736742"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        2448,
+        640
+      ],
+      "id": "4b60d43f-4d53-413c-bc76-f664a38fb4fe",
+      "name": "Available Properties1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7Mt86Piy6Le1vak5",
+          "name": "Arhan sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg",
+          "mode": "list",
+          "cachedResultName": "uae_properties_updated",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1542778966,
+          "mode": "list",
+          "cachedResultName": "Research sent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg/edit#gid=1542778966"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Research Type": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Research_Type__using_to_match_', `The research type: Finance/General/News`, 'string') }}",
+            "Topic / Query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Topic___Query', `The topic of the research.`, 'string') }}",
+            "Source": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Source', `The links that were used for the research.`, 'string') }}",
+            "Key Findings": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Key_Findings', `The key findings from the research`, 'string') }}",
+            "Detailed Notes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Detailed_Notes', `The detailed notes from the research.`, 'string') }}",
+            "Date Researched": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Date_Researched', `The date that was researched.`, 'string') }}",
+            "Full research": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Full_research', `The full research`, 'string') }}"
+          },
+          "matchingColumns": [
+            "Research Type"
+          ],
+          "schema": [
+            {
+              "id": "Research Type",
+              "displayName": "Research Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Topic / Query",
+              "displayName": "Topic / Query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Key Findings",
+              "displayName": "Key Findings",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Detailed Notes",
+              "displayName": "Detailed Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date Researched",
+              "displayName": "Date Researched",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Full research",
+              "displayName": "Full research",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1808,
+        640
+      ],
+      "id": "081716b1-77b7-4f17-ad41-d9df4dcc7c1e",
+      "name": "Add research to db",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7Mt86Piy6Le1vak5",
+          "name": "Arhan sheets"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        1936,
+        640
+      ],
+      "id": "0a550f5e-4360-4b3e-b5b2-458c1940cbdb",
+      "name": "Research Agent Think"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        2576,
+        640
+      ],
+      "id": "980fda44-2b15-4031-b744-9885e61b2ef5",
+      "name": "CRM Agent Think"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId }}-Research-agent"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1168,
+        640
+      ],
+      "id": "7d357b08-cdef-430f-b96d-868f864c7c21",
+      "name": "Research Agent Memory",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId }}-CRM-agent"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        2192,
+        640
+      ],
+      "id": "ea9ec740-5541-4727-81d6-1386efc84a08",
+      "name": "CRM Agent Memory",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId }}-Drafting-agent"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        288,
+        640
+      ],
+      "id": "c5af3735-9556-45a3-ad7e-a623b8bcd3e3",
+      "name": "Drafting Agent Memory",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg",
+          "mode": "list",
+          "cachedResultName": "uae_properties_updated",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1288455813,
+          "mode": "list",
+          "cachedResultName": "Customer Details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rbqNP61iIie81ptaS_tD98RmRM6vRd_KhtUqUZ2QUdg/edit#gid=1288455813"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        512,
+        848
+      ],
+      "id": "a7c02c8b-f74c-4302-887b-d43021bafae6",
+      "name": "Customer Details",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7Mt86Piy6Le1vak5",
+          "name": "Arhan sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        640
+      ],
+      "id": "7a3f94cc-6b87-45b2-9811-4198c235fc98",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        848
+      ],
+      "id": "cf848e13-9223-4084-850e-baeff63b3939",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to get the property suggestions for the user",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', `The customer name or everyone`, 'string') }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Get the best property recommendations. always get max to max 4 properties even if they dont get to the interest of the user"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        640
+      ],
+      "id": "3bd2c130-7851-4168-a6b9-9eb6f646674c",
+      "name": "Get best properties"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Use this tool to create as well send the email to the customer.",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', `The user interest, available selected properties, the email(s) of the customer`, 'string') }}",
+        "options": {
+          "systemMessage": "You are an email agent!\nYou create an html formatted email based on the user interest and the suggested properties given other agent.\n\nGenerate the email in this format: \n\n<!-- Card-Style HTML Email (text-only, no images/links) -->\n<div style=\"font-family:Arial,sans-serif;max-width:600px;margin:auto;background:#f7f9fc;padding:20px;border-radius:12px;line-height:1.5;\">\n  <h2 style=\"margin:0 0 8px;color:#0f75ff;\">Hi {{ $json['Customer Name'] }},</h2>\n  <p style=\"margin:0 0 16px;\">\n    Based on your interest — <em>{{ $json['User Interest'] }}</em> — here are some handpicked properties that may be perfect for you:\n  </p>\n\n  <!-- NOTE: Loop through ALL properties available -->\n  <!-- Show at least 4 properties if available; include more if present -->\n  {{#each $json['Properties available data']}}\n  <div style=\"background:#fff;border-radius:12px;padding:14px;margin:12px 0;box-shadow:0 6px 16px rgba(0,0,0,.08);\">\n    <h3 style=\"margin:0 0 6px;\">🏡 {{this.title}}</h3>\n    <p style=\"margin:0 0 6px;\">💰 {{this.price}} &nbsp;•&nbsp; 📐 {{this.size}} &nbsp;•&nbsp; 📍 {{this.location}}</p>\n    <ul style=\"padding-left:18px;margin:6px 0;color:#444;\">\n      {{#each this.amenities}}<li>{{this}}</li>{{/each}}\n    </ul>\n    <p style=\"margin:6px 0 0;color:#444;\">{{this.description}}</p>\n  </div>\n  {{/each}}\n\n  <p style=\"margin:16px 0 8px;\">You’re one step away from finding your ideal home. I’d love to help make it happen! 😊</p>\n\n  <p style=\"margin:0;font-size:12px;color:#6b7280;\">\n    <strong>Estagent</strong><br>\n    📞 +1837584930 <br>\n    📩 estagent@gmail.com\n  </p>\n</div>\n\n\nthen use the send email tool to send the html email to the user!"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        752,
+        640
+      ],
+      "id": "764dac16-ffb2-471c-a6ae-1bc561838094",
+      "name": "Email writer and sender"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        848
+      ],
+      "id": "946b1d1f-caff-4ced-b27e-248177ba032f",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        896,
+        848
+      ],
+      "id": "3e17b66c-f445-4ae4-8b74-dbaef434db58",
+      "name": "Send a message in Gmail",
+      "webhookId": "70da2043-d50b-433a-bc2b-b4d464005a36",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "P8NnEWN3J0gNiJjF",
+          "name": "Arhan Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"Response\": \"\",\n\t\"All best property details\": \"\",\n    \"Customer Email\": \"\",\n    \"customer Interest\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        848
+      ],
+      "id": "a4be82e1-4ba8-4203-ab7f-1b3279530f22",
+      "name": "Structured Output Parser"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Estagent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Estagent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drafting Offer Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Estagent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Available Properties": {
+      "ai_tool": [
+        [
+          {
+            "node": "Get best properties",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Estagent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model8": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Researched Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "News Tavily Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "General Tavily Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finance Tavily tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Estagent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model9": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "CRM Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CRM Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Estagent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Details1": {
+      "ai_tool": [
+        [
+          {
+            "node": "CRM Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Available Properties1": {
+      "ai_tool": [
+        [
+          {
+            "node": "CRM Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add research to db": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Agent Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CRM Agent Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "CRM Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Agent Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CRM Agent Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "CRM Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drafting Agent Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Drafting Offer Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Details": {
+      "ai_tool": [
+        [
+          {
+            "node": "Get best properties",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Drafting Offer Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Get best properties",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get best properties": {
+      "ai_tool": [
+        [
+          {
+            "node": "Drafting Offer Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email writer and sender": {
+      "ai_tool": [
+        [
+          {
+            "node": "Drafting Offer Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email writer and sender",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email writer and sender",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Get best properties",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

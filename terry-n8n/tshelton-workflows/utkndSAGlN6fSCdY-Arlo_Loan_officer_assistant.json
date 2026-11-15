@@ -1,0 +1,396 @@
+{
+  "name": "Arlo Loan officer assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "abro-assistant",
+        "options": {}
+      },
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        0
+      ],
+      "id": "9e6e191e-6f37-4c35-a42f-6fd0f0dfe2fc",
+      "webhookId": "46aafce0-3a00-4eb9-98ea-9a9202cf58fe"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "system_prompt",
+              "value": "You are Arlo, a professional, knowledgeable, and friendly AI assistant for Align Lending.\nYou specialize in loan qualification support for both borrowers and loan officers.\nYou have extensive knowledge of mortgage loan products, lending guidelines, documentation requirements, and qualification criteria across conventional, FHA, VA, and other loan types.\n\nYour main purpose is to:\n- Answer mortgage-related questions from loan officers and borrowers\n- Collect and verify borrower information\n- Assess loan eligibility based on mortgage guidelines\n- Help move qualified borrowers forward in the mortgage process\n- Provide solutions and options, not just direct answers\n\nStyle:\n- Calm, confident, compliant, informative, and approachable\n- Empathetic & clear, concise & professional\n- Supportive & non-judgmental\n- Speak naturally, not robotic or scripted\n- Use light reassurance in sensitive cases\n\nGuidance:\n- Always reference verified lending guidelines\n- Break down complex topics into simple explanations\n- Offer next steps for eligible borrowers\n- Suggest alternatives gently if borrower is not eligible\n- Never offer financial or legal advice\n\nTone Examples:\n- “I completely understand, let’s walk through this together.”\n- “That’s a very common question, and I’m happy to explain it.”\n- “We’ll figure out if this loan is a fit for you—no pressure.”"
+            },
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "name": "Set Prompt Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -96
+      ],
+      "id": "b28cab76-e858-4e12-ac03-32bb8c884b1d"
+    },
+    {
+      "parameters": {
+        "resource": "assistant",
+        "operation": "create",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "name": "Arlo",
+        "description": "Loan officer assistant Guidline pro and warm helper",
+        "instructions": "Helps Align Lending Loan officers qualify and make sure borrowers are eligable for products with all of our lenders. Our primary lender is United Wholesale mortgage. Makes sure to ask the right questions and always looks to provide a solution. If they dont qualify now, what changes could they do to qualify? ",
+        "knowledgeRetrieval": true,
+        "file_ids": [
+          "file-4wqz5Nj3Jmwfh7ouoySBjE"
+        ],
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        464,
+        -96
+      ],
+      "id": "94caac22-da07-4389-8a38-79b0bc50f117",
+      "name": "OpenAI",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "retryOnFail": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08PZ3SMLBE",
+          "mode": "list",
+          "cachedResultName": "arlo"
+        },
+        "text": "=body.text",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        64
+      ],
+      "id": "3b82696a-38a9-4d3e-a425-61b4b1c621de",
+      "name": "Slack",
+      "webhookId": "3dd1ff83-c56f-4947-89f0-e4c6388b307e",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "gkPoMriinlhxHTR9",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08PZ3SMLBE",
+          "mode": "list",
+          "cachedResultName": "arlo"
+        },
+        "text": "= {{ $json.output }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1008,
+        -80
+      ],
+      "id": "0651670c-940b-4354-b9b3-ed72b1fa94f2",
+      "name": "Slack1",
+      "webhookId": "055b39f8-eb56-41af-a5c9-6dcf18a8a458",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "gkPoMriinlhxHTR9",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "assistant",
+        "assistantId": {
+          "__rl": true,
+          "value": "asst_VEiDoCYX0qh4io1Dm1PCqrbV",
+          "mode": "list",
+          "cachedResultName": "Arlo"
+        },
+        "prompt": "define",
+        "text": "={{ $('Set Prompt Context').item.json.system_prompt }}",
+        "memory": "threadId",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        672,
+        -64
+      ],
+      "id": "c1782a0c-b747-4e7a-901c-1ba4c6103c20",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": "={{ 5 }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        768,
+        128
+      ],
+      "id": "3256e12d-093c-48d1-9724-aebeb7b59693",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "content": "## I'm a note \n**Double click** "
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -320
+      ],
+      "id": "d5d4cc31-3dd8-4739-900d-cc39c210c698",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "formTitle": "...",
+        "formDescription": "...",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "data",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        288,
+        272
+      ],
+      "id": "4df09bbd-42b0-415f-8a5a-87d62735992e",
+      "name": "On form submission",
+      "webhookId": "4c0d550c-3e1e-4478-821a-18f53645507f"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        496,
+        272
+      ],
+      "id": "524f9b11-87b0-4309-b4c1-110102332ee8",
+      "name": "Upload a file",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        880,
+        272
+      ],
+      "id": "251decd3-3e50-4d99-bf7d-ffdc7fd61123",
+      "name": "When chat message received",
+      "webhookId": "70825fbd-7540-4ecd-9395-ae8c2ab20e97"
+    },
+    {
+      "parameters": {
+        "resource": "assistant",
+        "assistantId": {
+          "__rl": true,
+          "value": "asst_VEiDoCYX0qh4io1Dm1PCqrbV",
+          "mode": "list",
+          "cachedResultName": "Arlo"
+        },
+        "prompt": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1104,
+        288
+      ],
+      "id": "fa9381f7-b672-44f8-81db-723a475e5e2f",
+      "name": "OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": "={{ 5 }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1264,
+        496
+      ],
+      "id": "69559726-d031-4f4a-8c54-b1326c792e6f",
+      "name": "Simple Memory1"
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Prompt Context",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Prompt Context": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack1": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Slack1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        []
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Upload a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "OpenAI2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "OpenAI2",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 1,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

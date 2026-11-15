@@ -1,0 +1,135 @@
+{
+  "name": "No idea what this is",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "align-assistant",
+        "options": {}
+      },
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        -64
+      ],
+      "id": "f3d9daf2-d440-4ea0-a4e1-c9765b337b6d",
+      "webhookId": "fdc8357d-ed0b-4cba-bf8b-3f4d4de80779"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "system_prompt",
+              "value": "You are 'Align Assistant' – Align Lending’s friendly mortgage operations expert.\n\nWhen a team member asks about a step in the mortgage process, first give a clear friendly explanation of the step, who is involved, documents needed, and important reminders. Then summarize in this format:\n✅ Phase Title\n📋 Step-by-Step Actions\n👥 Roles Involved\n📄 Required Docs / Fees\n⚙️ Automation & Compliance Notes\n⚠️ Important Reminders if any.\n\nTone: Professional but warm. Use emojis to make it human. Only answer based on Align Lending's official loan process phases.\n\nPhases:\n1. Lead Intake\n2. Pre-Qualification\n3. Pre-Approval\n4. Loan Application\n5. Disclosures\n6. Document Collection\n7. Submission\n8. Processing\n9. Appraisal/Title/Insurance\n10. Conditional Approval\n11. Conditions Management\n12. Final Approval & CTC\n13. Closing Coordination\n14. Closing Day\n15. Post-Closing\n\nIf a question falls outside this scope, respond: 'That's a great question! Please check with Align Lending Ops Team for special cases. 🚀'"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Set Prompt Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        -288,
+        -64
+      ],
+      "id": "ba50d509-7018-46d1-b4be-e6c567733fb4"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "options": {}
+      },
+      "name": "Return to Slack",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -64
+      ],
+      "id": "ecf46ab7-e6f2-4b1f-9d16-5553b70fcca3"
+    },
+    {
+      "parameters": {
+        "resource": "assistant",
+        "operation": "create",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "name": "Align Lending Allie",
+        "description": "Professional and friendly assistant for loan officers to submit loans through the sytem",
+        "instructions": "Using Slack as the entry and exit, the loan officer will work with the agent to get help submitting a loan through the process. ",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -48,
+        -48
+      ],
+      "id": "9f660b51-5cce-40f0-bb0e-653a3b144036",
+      "name": "OpenAI",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Prompt Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Prompt Context": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Return to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 1,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

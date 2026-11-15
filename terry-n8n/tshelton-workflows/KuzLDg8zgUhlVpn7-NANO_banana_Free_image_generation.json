@@ -1,0 +1,238 @@
+{
+  "name": "NANO banana - Free image generation",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "...",
+        "formDescription": "...",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "user_input",
+              "placeholder": "...",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "07c61412-fc8c-43b2-9283-4302fb639e55",
+      "name": "On form submission",
+      "webhookId": "ef1b0842-249c-4f66-bd88-b49d159a1151"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.user_input }}",
+        "options": {
+          "systemMessage": "=You are an advanced AI specializing in transforming a short user provided escription into a hyper realistic, cinematic first – image prompt. This single prompt is optimised for both text to image and text video AI models such as flux, mid journey, stable diffusion, Gen-3 Alpha and Pika Labs\n\nuser-provided-description: {{ $json.user_input }}\n\nFINAL_REMINDER:\n  - output must be less than 950 characters.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "81d0e256-7ca7-4a4b-aafd-d8e888ccc86a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "c9f4a041-b1ec-4543-a1d9-81c29450ea1e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "lgop4pevUeRAD6bO",
+          "name": "Gemini Arhan"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"google/gemini-2.5-flash-image-preview:free\",\n  \"modalities\": [\"image\", \"text\"],\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.output }}\"\n    }\n  ]\n}\n",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "67870b79-fb52-49dc-90f2-f1d4773d183b",
+      "name": "HTTP Request",
+      "credentials": {
+        "openRouterApi": {
+          "id": "n6Q99htRsl2laNAf",
+          "name": "Arhan openrouter"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "461c8127-45c5-4f39-ad02-1cc150a97bd8",
+              "name": "data",
+              "value": "={{ $json.choices[0].message.images[0]['image_url'][\"url\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "1e1ed955-d1ef-46f2-b85d-a36aa9cac013",
+              "name": "base",
+              "value": "={{ $json.choices[0].message.images[0]['image_url'][\"url\"].split(\",\")[1]}}",
+              "type": "string"
+            },
+            {
+              "id": "480cd84e-3cd3-46ba-ba29-c4bdba9693ae",
+              "name": "mime",
+              "value": "={{$json[\"choices\"][0][\"message\"][\"images\"][0][\"image_url\"][\"url\"].match(/^data:([^;]+)/)[1]}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        768,
+        0
+      ],
+      "id": "ca67b495-e6b5-4665-841d-8906ab03c7aa",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        976,
+        0
+      ],
+      "id": "2aef3a85-73ed-4804-bb75-c06b10f55788",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "content": "## create AI images using Gemini for free",
+        "height": 80,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -128
+      ],
+      "id": "44d847bf-101b-4263-8390-7ed0cd4aa631",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

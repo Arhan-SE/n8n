@@ -1,0 +1,1154 @@
+{
+  "name": "Research News AI avatar social media",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/media",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key",
+              "value": "={{ $('Prepare for Publish').item.json.blotato_api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $('Get Avatar Video').item.json.data.video_url }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2208,
+        960
+      ],
+      "id": "4a97d7c7-2011-482d-9d49-f488279bae7a",
+      "name": "Upload to Blotato"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key",
+              "value": "={{ $('Prepare for Publish').item.json.blotato_api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"post\": {\n    \"target\": {\n      \"targetType\": \"instagram\"\n    },\n    \"content\": {\n      \"text\": {{ $('Prepare for Publish').item.json.final_text_long.toJsonString() }},\n      \"platform\": \"instagram\",\n      \"mediaUrls\": [\"{{ $json.url }}\"]\n    },\n    \"accountId\": \"{{ $('Prepare for Publish').item.json.instagram_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2448,
+        160
+      ],
+      "id": "e0ec283d-8f5d-419b-ae0e-df64fd02c24b",
+      "name": "[Instagram] Publish via Blotato"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key",
+              "value": "={{ $('Prepare for Publish').item.json.blotato_api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"post\": {\n    \"target\": {\n      \"targetType\": \"facebook\",\n      \"pageId\": \"{{ $('Prepare for Publish').item.json.facebook_page_id }}\"\n    },\n    \"content\": {\n      \"text\": {{ $('Prepare for Publish').item.json.final_text_long.toJsonString() }},\n      \"platform\": \"facebook\",\n      \"mediaUrls\": [\"{{ $json.url }}\"]\n    },\n    \"accountId\": \"{{ $('Prepare for Publish').item.json.facebook_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2448,
+        512
+      ],
+      "id": "eb1709fc-e996-4df1-a1bc-7cabfad80fb0",
+      "name": "[Facebook] Publish via Blotato",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key",
+              "value": "={{ $('Prepare for Publish').item.json.blotato_api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"post\": {\n    \"target\": {\n      \"targetType\": \"linkedin\"\n    },\n    \"content\": {\n      \"text\": {{ $('Prepare for Publish').item.json.final_text_long.toJsonString() }},\n      \"platform\": \"linkedin\",\n      \"mediaUrls\": [\"{{ $json.url }}\"]\n    },\n    \"accountId\": \"{{ $('Prepare for Publish').item.json.linkedin_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2448,
+        960
+      ],
+      "id": "436909a9-4bc4-4efd-a7af-1608c1b0d02a",
+      "name": "[Linkedin] Publish via Blotato",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key",
+              "value": "={{ $('Prepare for Publish').item.json.blotato_api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"post\": {\n    \"target\": {\n      \"targetType\": \"tiktok\",\n      \"isYourBrand\": false,\n      \"disabledDuet\": false,\n      \"privacyLevel\": \"PUBLIC_TO_EVERYONE\",\n      \"isAiGenerated\": false,\n      \"disabledStitch\": false,\n      \"disabledComments\": false,\n      \"isBrandedContent\": false\n    },\n    \"content\": {\n      \"text\": {{ $('Prepare for Publish').item.json.final_text_long.toJsonString() }},\n      \"platform\": \"tiktok\",\n      \"mediaUrls\": [\"{{ $json.url }}\"]\n    },\n    \"accountId\": \"{{ $('Prepare for Publish').item.json.tiktok_id }}\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2448,
+        1360
+      ],
+      "id": "5b3d845c-2a6e-4984-8123-51b4f72088d0",
+      "name": "[Tiktok] Publish via Blotato"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "prompt": "={{ $('Prepare for Publish').item.json.final_text_long }}",
+        "options": {
+          "returnImageUrls": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        2448,
+        1760
+      ],
+      "id": "b0c91582-5d70-4d53-8778-1bb1f9178bf1",
+      "name": "OpenAI",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/media",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key",
+              "value": "={{ $('Prepare for Publish').item.json.blotato_api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.url }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        1760
+      ],
+      "id": "f75c21aa-46d9-498a-a96a-60a67c6bfcae",
+      "name": "Upload to Blotato - Image",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key",
+              "value": "={{ $('Prepare for Publish').item.json.blotato_api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"post\": {\n    \"target\": {\n      \"targetType\": \"pinterest\",\n      \"boardId\": \"{{ $('Prepare for Publish').item.json.pinterest_board_id }}\",\n      \"link\": \"https://www.tiktok.com/@sabrina_ramonov\"\n    },\n    \"content\": {\n      \"text\": {{ $('Prepare for Publish').item.json.final_text_short.toJsonString() }},,\n      \"platform\": \"pinterest\",\n      \"mediaUrls\": [\"{{ $json.url }}\"]\n    },\n    \"accountId\": \"{{ $('Prepare for Publish').item.json.pinterest_id }}\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2880,
+        1760
+      ],
+      "id": "cd6900d8-b489-4da0-b077-cb8255c5652f",
+      "name": "[Pinterest] Publish via Blotato",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key",
+              "value": "={{ $('Prepare for Publish').item.json.blotato_api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"post\": {\n    \"target\": {\n      \"targetType\": \"youtube\",\n      \"title\": \"TEST VIDEO\",\n      \"privacyStatus\": \"public\",\n      \"shouldNotifySubscribers\": true\n    },\n    \"content\": {\n      \"text\": {{ $('Prepare for Publish').item.json.final_text_long.toJsonString() }},\n      \"platform\": \"youtube\",\n      \"mediaUrls\": [\"{{ $json.url }}\"]\n    },\n    \"accountId\": \"{{ $('Prepare for Publish').item.json.youtube_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2800,
+        160
+      ],
+      "id": "0bc83c7c-1538-4939-bdfc-97491d92d95b",
+      "name": "[Youtube] Publish via Blotato"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key",
+              "value": "={{ $('Prepare for Publish').item.json.blotato_api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"post\": {\n    \"target\": {\n      \"targetType\": \"threads\"\n    },\n    \"content\": {\n      \"text\": {{ $('Prepare for Publish').item.json.final_text_short.toJsonString() }},\n      \"platform\": \"threads\",\n      \"mediaUrls\": [\"{{ $json.url }}\"]\n    },\n    \"accountId\": \"{{ $('Prepare for Publish').item.json.threads_id }}\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2800,
+        512
+      ],
+      "id": "f2359f04-d85a-4ae9-a8ad-a642e02d649b",
+      "name": "[Threads] Publish via Blotato",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key",
+              "value": "={{ $('Prepare for Publish').item.json.blotato_api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"post\": {\n    \"target\": {\n      \"targetType\": \"twitter\"\n    },\n    \"content\": {\n      \"text\": {{ $('Prepare for Publish').item.json.final_text_short.toJsonString() }},\n      \"platform\": \"twitter\",\n      \"mediaUrls\": [\"{{ $json.url }}\"]\n    },\n    \"accountId\": \"{{ $('Prepare for Publish').item.json.twitter_id }}\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2800,
+        960
+      ],
+      "id": "39188173-f1d6-4201-a281-840258bb8b86",
+      "name": "[Twitter] Publish via Blotato"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key",
+              "value": "={{ $('Prepare for Publish').item.json.blotato_api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"post\": {\n    \"target\": {\n      \"targetType\": \"bluesky\"\n    },\n    \"content\": {\n      \"text\": {{ $('Prepare for Publish').item.json.final_text_short.toJsonString() }},\n      \"platform\": \"bluesky\",\n      \"mediaUrls\": []\n    },\n    \"accountId\": \"{{ $('Prepare for Publish').item.json.bluesky_id }}\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2800,
+        1360
+      ],
+      "id": "d65779e7-69b9-4d83-a9dc-1b49d3b9b49d",
+      "name": "[Bluesky] Publish via Blotato",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        960
+      ],
+      "id": "c88d5d61-c601-47ca-9f39-a98a650d2150",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "# INSTRUCTIONS\n\nPerform the following tasks, in order:\n\n1. Fetch the top 10 stories from Hacker News from the past 24 hours related to AI or LLMs. \n\n2. Select the top story that is most likely to go viral on social media. \n\n3. Fetch the article and Hacker News comments.\n\n4. Create a 30-second monologue script for an AI avatar video, following these guidelines:\n   - The script should be approximately 30 seconds when spoken aloud.\n   - Include lots of details and statistics from the article.\n   - Use 6th grade reading level.\n   - Balanced viewpoint.\n\n5. Update the script's first 2 sentences to use sensational viral hooks that grab the viewer's attention and spark curiosity. The 3rd sentence should start diving into the article's details.\n\n6. Replace the last sentence with: \"Hit follow to stay ahead in AI!\"\n\n# OUTPUT FORMAT\n\nONLY output the exact video script. Do not output anything else. NEVER include intermediate thoughts, notes, or formatting.",
+        "options": {
+          "systemMessage": "You are a senior highly experienced Viral Script Creator",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        240,
+        960
+      ],
+      "id": "50c9ea95-3214-4795-82f4-012d6e5d5f59",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "articleId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Article_ID', ``, 'string') }}",
+        "additionalFields": {
+          "includeComments": true
+        }
+      },
+      "type": "n8n-nodes-base.hackerNewsTool",
+      "typeVersion": 1,
+      "position": [
+        480,
+        1168
+      ],
+      "id": "0a613571-90be-4f12-98a2-d40751728922",
+      "name": "Fetch HN Article"
+    },
+    {
+      "parameters": {
+        "resource": "all",
+        "additionalFields": {
+          "keyword": "=AI",
+          "tags": [
+            "front_page"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.hackerNewsTool",
+      "typeVersion": 1,
+      "position": [
+        320,
+        1168
+      ],
+      "id": "a802544a-424a-4cd6-8967-9a788ee1605e",
+      "name": "Fetch HN Front Page"
+    },
+    {
+      "parameters": {
+        "amount": 8,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        960
+      ],
+      "id": "c359da6c-0400-43ce-90d8-c6d58695da85",
+      "name": "Wait",
+      "webhookId": "d9404622-0a06-4a65-959e-badd4fd87465",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "o3-mini",
+          "mode": "list",
+          "cachedResultName": "o3-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        1168
+      ],
+      "id": "83443138-aad1-4c73-8100-6bb0902d032a",
+      "name": "Write Script",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"heygen_api_key\": \"MDlhYjhkNmYzNzdjNDU2NmFlMDY5NmFmNDIzMWM0YjMtMTc1NjM3MjA3NA==\",\n  \"avatar_id\": \"Kristin_public_2_20240108\",\n  \"voice_id\": \"d7bbcdd6964c47bdaae26decade4a933\",\n  \"background_video_url\": \"https://database.blotato.io/storage/v1/object/public/public_media/4ddd33eb-e811-4ab5-93e1-2cd0b7e8fb3f/videogen2-render-e6b398a2-5859-4a77-88ef-2345bcefdc98.mp4\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        960
+      ],
+      "id": "459131b5-0a2b-4071-9008-0ffc291ebf5e",
+      "name": "Setup Heygen"
+    },
+    {
+      "parameters": {
+        "url": "https://api.heygen.com/v1/video_status.get",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "video_id",
+              "value": "={{ $('Create Avatar Video').item.json.data.video_id }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Api-Key",
+              "value": "={{ $('Setup Heygen').item.json.heygen_api_key }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1680,
+        960
+      ],
+      "id": "eaff3be5-a28e-459c-9537-5e23fa1cea37",
+      "name": "Get Avatar Video"
+    },
+    {
+      "parameters": {
+        "content": "# Research Daily News and Write Script",
+        "height": 2100,
+        "width": 940,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ea0372af-8480-4068-9f65-2f0265ef1d33",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Create AI Avatar Video\n\n- Heygen API plan (paid) is required; the free plan is insufficient.\n- if you have a long script, you may need to increase the WAIT time.\n- you can use Elevenlabs voice by integrating Elevenlabs from within Heygen app.",
+        "height": 2100,
+        "width": 800,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        16
+      ],
+      "id": "9eddb71d-0dd9-4f43-827c-cfaf9138fb0e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Publish to Social Media\n\n- Sign up for Blotato: https://www.blotato.com\n- Blotato's API currently doesn't support uploading videos to Bluesky or Pinterest. \n- This feature will be released in the future, so I've deactivated the nodes for now.",
+        "height": 2100,
+        "width": 1120,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        0
+      ],
+      "id": "e998c257-db0e-437f-b1b5-03d6717ec18c",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"blotato_api_key\": \"\",\n  \"instagram_id\": \"\",\n  \"youtube_id\": \"\",\n  \"tiktok_id\": \"\",\n  \"facebook_id\": \"\",\n  \"facebook_page_id\": \"\",\n  \"threads_id\": \"\",\n  \"twitter_id\": \"\",\n  \"linkedin_id\": \"\",\n  \"pinterest_id\": \"\",\n  \"pinterest_board_id\": \"\",\n  \"bluesky_id\": \"\",\n  \"final_text_long\": {{ $('Write Long Caption').item.json.message.content.toJsonString() }},\n  \"final_text_short\": {{ $('Write Short Caption').item.json.message.content.toJsonString() }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2048,
+        960
+      ],
+      "id": "3c948c81-bf00-431d-b8be-b87095958510",
+      "name": "Prepare for Publish"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# EXAMPLE\n\n<example>\nMany people have recently asked me about ask engine optimization, which is all about optimizing your website and existing content, so it can be pulled into ChatGPT and other generative AI tools. Consider that generative AI tools tend to be more conversational in nature and have a Q&A type format, so search engines will want to pull in snippets that concisely answer a user’s question.- what is ask engine optimization in the age of AI?- How does traditional SEO compare to ask engine optimization today?- top tips and tricks to get started with ask engine optimization?\n\n#ai #askengineoptimization #chatgpts #seo #aitools #digitalmarketing\n</example>\n\n# CONTEXT\n\nInfer the topic from the sources provided.\n\n# WRITING STYLE\n\nHere’s how you always write:\n\n<writing_style>\n\n- Your writing style is spartan and informative.\n- Use clear, simple language.\n- Employ short, impactful sentences.\n- Use active voice; avoid passive voice.\n- Focus on practical, actionable insights.\n- Incorporate data or statistics to support claims when possible.\n- Use \"\"\"\"\"\"\"\"you\"\"\"\"\"\"\"\" and \"\"\"\"\"\"\"\"your\"\"\"\"\"\"\"\" to directly address the reader.\n- Avoid metaphors and clichés.\n- Avoid generalizations.\n- Do not include common setup language in any sentence, including: in conclusion, in closing, etc.\n- Do not output warnings or notes—just the output requested.\n- Do not use hashtags.\n- Do not use semicolons.\n- Do not use emojis.\n- Do not use asterisks.\n- Do not use adjectives and adverbs.\n- Do NOT use these words:\n\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"can, may, just, that, very, really, literally, actually, certainly, probably, basically, could, maybe, delve, embark, enlightening, esteemed, shed light, craft, crafting, imagine, realm, game-changer, unlock, discover, skyrocket, abyss, you're not alone, in a world where, revolutionize, disruptive, utilize, utilizing, dive deep, tapestry, illuminate, unveil, pivotal, enrich, intricate, elucidate, hence, furthermore, realm, however, harness, exciting, groundbreaking, cutting-edge, remarkable, it. remains to be seen, glimpse into, navigating, landscape, stark, testament, in summary, in conclusion, moreover, boost, bustling, opened up, powerful, inquiries, ever-evolving\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\n</writing_style>\n\n# PLANNING\n\nYour goal is to write a 50-word video caption based on the provided source.\n\n1. Analyze the provided sources thoroughly.\n2. Study the <example> post carefully. You will be asked to replicate their:\n    - Overall structure.\n    - Tone and voice.\n    - Formatting (including line breaks and spacing).\n    - Length (aim for a similarly detailed post).\n    - Absence of emojis.\n    - Use of hashtags.\n    - Emotional resonance.\n\n# OUTPUT\nFollow the GUIDELINES below to write the post. Use your analysis from step 1 and step 2. Use the provided sources as the foundation for your post, expanding on it significantly while maintaining the style and structure of the examples provided from step 2. You MUST use information from the provided sources. Make sure you adhere to your <writing_style>.\n\n<guidelines>\nThe description should be structured as follows:\n1. Start with 1 paragraph summarizing the source\n2. Newline, followed by 3 bullet points of questions that a viewer might ask on a search engine about the source\n3. Newline, followed by these hashtags: #ai #artificialintelligence #ainews #sabrinaramonov #aiavatar\n</guidelines>\n\nTake a deep breath and take it step-by-step!\n\n# INPUT\nUse the following information sources:\n<sources>\n{{ $json.output }}\n</sources>"
+            },
+            {
+              "content": "You are an expert senior highly experienced Spartan Caption Writer",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        608,
+        848
+      ],
+      "id": "9d3a022c-644b-41a2-996a-3a5326e59c04",
+      "name": "Write Long Caption",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Write a spartan 2-sentence caption summarizing the video content, use 6th grade language, balanced neutral perspective, no emojis:\n\n<content>\n{{ $json.message.content }}\n</content>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        608,
+        1088
+      ],
+      "id": "e6bf1953-fbcc-4637-8fb6-b6b9b061f999",
+      "name": "Write Short Caption",
+      "credentials": {
+        "openAiApi": {
+          "id": "h5gBLRU2ylUR8JtQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.heygen.com/v2/video/generate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Api-Key",
+              "value": "={{ $json.heygen_api_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"video_inputs\": [\n    {\n      \"character\": {\n        \"type\": \"avatar\",\n        \"avatar_id\": \"{{ $json.avatar_id }}\",\n        \"avatar_style\": \"normal\",\n        \"scale\": 1.0,\n        \"offset\": {\n          \"x\": 0.0,\n          \"y\": 0.0\n        },\n        \"matting\": true\n      },\n      \"voice\": {\n        \"type\": \"text\",\n        \"input_text\": \"{{ $('AI Agent').item.json.output }}\",\n        \"voice_id\": \"{{ $json.voice_id }}\",\n        \"speed\": 1.1,\n        \"pitch\": 50,\n        \"emotion\": \"Excited\"\n      },\n      \"background\": {\n        \"type\": \"video\",\n        \"url\": \"{{ $json.background_video_url }}\",\n        \"play_style\": \"loop\",\n        \"fit\": \"cover\"\n      }\n    }\n  ],\n  \"dimension\": {\n    \"width\": 720,\n    \"height\": 1280\n  },\n  \"aspect_ratio\": \"9:16\",\n  \"caption\": false,\n  \"title\": \"n8n TEST AVATAR\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        960
+      ],
+      "id": "207b34f7-22b1-4c8a-a8c2-271538346fe2",
+      "name": "Create Avatar Video"
+    },
+    {
+      "parameters": {
+        "content": "## Make sure you fill out \"Setup Heygen\"",
+        "height": 180,
+        "width": 150,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        1152
+      ],
+      "id": "48dd8304-3ade-47f5-94ac-2a703a34a851",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Make sure you fill out \"Prepare for Publish\"",
+        "height": 180,
+        "width": 160,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2032,
+        1152
+      ],
+      "id": "0d846710-7679-49c4-a9dc-a7e569c6713e",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## 1. Mortgage News\n\n## 2. Brand Based(Given by the client)",
+        "height": 224,
+        "width": 352
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        992
+      ],
+      "id": "9958a4d2-ee93-4394-850d-e77648227b2f",
+      "name": "Sticky Note5"
+    }
+  ],
+  "connections": {
+    "Upload to Blotato": {
+      "main": [
+        [
+          {
+            "node": "[Instagram] Publish via Blotato",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "[Facebook] Publish via Blotato",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "[Linkedin] Publish via Blotato",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "[Tiktok] Publish via Blotato",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "[Youtube] Publish via Blotato",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "[Threads] Publish via Blotato",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "[Twitter] Publish via Blotato",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "[Bluesky] Publish via Blotato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Upload to Blotato - Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Blotato - Image": {
+      "main": [
+        [
+          {
+            "node": "[Pinterest] Publish via Blotato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Write Long Caption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch HN Article": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch HN Front Page": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Script": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup Heygen": {
+      "main": [
+        [
+          {
+            "node": "Create Avatar Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Avatar Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Avatar Video": {
+      "main": [
+        [
+          {
+            "node": "Prepare for Publish",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare for Publish": {
+      "main": [
+        [
+          {
+            "node": "Upload to Blotato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Long Caption": {
+      "main": [
+        [
+          {
+            "node": "Write Short Caption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Short Caption": {
+      "main": [
+        [
+          {
+            "node": "Setup Heygen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Avatar Video": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "AI Agent": [
+      {
+        "json": {
+          "output": "Hold on tight, because I've found a mind-blowing new tool that's turning iPhones into app-making machines! This viral breakthrough is shaking up the tech world and has hackers buzzing with over 140 upvotes and nearly 100 comments on Hacker News. Bitrig, powered by AI using Claude Sonnet 4.0, lets you chat your way to building native Swift apps right on your phone. It uses a custom Swift interpreter that lets you preview your app instantly without needing a bulky computer or Xcode. Even if you're not a coding wizard, its simple design makes it easy to create sleek apps step by step. The platform connects with Apple's SDK frameworks and offers a way to compile fully optimized builds via TestFlight, blending innovation with practicality. Experts and beginners alike are weighing in, showing both excitement and careful optimism about its potential. Hit follow to stay ahead in AI!",
+          "intermediateSteps": [
+            {
+              "action": {
+                "tool": "Fetch_HN_Front_Page",
+                "toolInput": {},
+                "toolCallId": "call_3lNCvwdokkmKONgHyJhQS2JK",
+                "log": "Invoking \"Fetch_HN_Front_Page\" with {}\n",
+                "messageLog": [
+                  {
+                    "lc": 1,
+                    "type": "constructor",
+                    "id": [
+                      "langchain_core",
+                      "messages",
+                      "AIMessageChunk"
+                    ],
+                    "kwargs": {
+                      "content": "",
+                      "additional_kwargs": {
+                        "tool_calls": [
+                          {
+                            "index": 0,
+                            "id": "call_3lNCvwdokkmKONgHyJhQS2JK",
+                            "type": "function",
+                            "function": {
+                              "name": "Fetch_HN_Front_Page",
+                              "arguments": "{}"
+                            }
+                          }
+                        ]
+                      },
+                      "response_metadata": {
+                        "prompt": 0,
+                        "completion": 0,
+                        "usage": {
+                          "prompt_tokens": 290,
+                          "completion_tokens": 924,
+                          "total_tokens": 1214,
+                          "prompt_tokens_details": {
+                            "cached_tokens": 0,
+                            "audio_tokens": 0
+                          },
+                          "completion_tokens_details": {
+                            "reasoning_tokens": 896,
+                            "audio_tokens": 0,
+                            "accepted_prediction_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                          }
+                        },
+                        "finish_reason": "tool_calls",
+                        "system_fingerprint": "fp_c278fb013d",
+                        "model_name": "o3-mini-2025-01-31",
+                        "service_tier": "default"
+                      },
+                      "tool_call_chunks": [
+                        {
+                          "name": "Fetch_HN_Front_Page",
+                          "args": "{}",
+                          "id": "call_3lNCvwdokkmKONgHyJhQS2JK",
+                          "index": 0,
+                          "type": "tool_call_chunk"
+                        }
+                      ],
+                      "id": "chatcmpl-C9SqbjsRbnXJTD0CoqzG115bGszRk",
+                      "usage_metadata": {
+                        "input_tokens": 290,
+                        "output_tokens": 924,
+                        "total_tokens": 1214,
+                        "input_token_details": {
+                          "audio": 0,
+                          "cache_read": 0
+                        },
+                        "output_token_details": {
+                          "audio": 0,
+                          "reasoning": 896
+                        }
+                      },
+                      "tool_calls": [
+                        {
+                          "name": "Fetch_HN_Front_Page",
+                          "args": {},
+                          "id": "call_3lNCvwdokkmKONgHyJhQS2JK",
+                          "type": "tool_call"
+                        }
+                      ],
+                      "invalid_tool_calls": []
+                    }
+                  }
+                ]
+              },
+              "observation": "[{\"_highlightResult\":{\"author\":{\"matchLevel\":\"none\",\"matchedWords\":[],\"value\":\"p1esk\"},\"title\":{\"fullyHighlighted\":false,\"matchLevel\":\"full\",\"matchedWords\":[\"ai\"],\"value\":\"Canaries in the Coal Mine? Recent Employment Effects of <em>AI</em> [pdf]\"},\"url\":{\"matchLevel\":\"none\",\"matchedWords\":[],\"value\":\"https://digitaleconomy.stanford.edu/wp-content/uploads/2025/08/Canaries_BrynjolfssonChandarChen.pdf\"}},\"_tags\":[\"story\",\"author_p1esk\",\"story_45047659\",\"front_page\"],\"author\":\"p1esk\",\"children\":[45048344,45048498,45048570,45048643,45048672,45049072,45049101],\"created_at\":\"2025-08-28T02:28:19Z\",\"created_at_i\":1756348099,\"num_comments\":52,\"objectID\":\"45047659\",\"points\":69,\"story_id\":45047659,\"title\":\"Canaries in the Coal Mine? Recent Employment Effects of AI [pdf]\",\"updated_at\":\"2025-08-28T09:01:26Z\",\"url\":\"https://digitaleconomy.stanford.edu/wp-content/uploads/2025/08/Canaries_BrynjolfssonChandarChen.pdf\"},{\"_highlightResult\":{\"author\":{\"matchLevel\":\"none\",\"matchedWords\":[],\"value\":\"kylemacomber\"},\"story_text\":{\"fullyHighlighted\":false,\"matchLevel\":\"full\",\"matchedWords\":[\"ai\"],\"value\":\"Hi HN, we’re Kyle, Jacob, and Tim. We’re building Bitrig (<a href=\\\"https://www.bitrig.app\\\">https://www.bitrig.app</a>).<p>Bitrig lets you create native Swift apps for your phone, on your phone, just by chatting with <em>AI</em>. It’s like Lovable for iPhone apps.<p>Here's a video of Bitrig in action:\\n<a href=\\\"https://youtu.be/CUlWhF3ERME\\\" rel=\\\"nofollow\\\">https://youtu.be/CUlWhF3ERME</a><p>We created SwiftUI at Apple to help developers make better apps with less code. Bitrig lets anyone build at this level of polish. If you've thought about making an iPhone app, Bitrig is the easiest possible way to get started with Swift.<p>Bitrig uses Claude Sonnet 4.0 with a simple system prompt and tool definitions to generate native Swift code. Normally running this on an iPhone would require compiling and signing it with Xcode, and you can’t run Xcode on an iPhone. So we did something… creative. We wrote a custom Swift interpreter! Among other things this lets you instantly preview your app in Bitrig and share it with just a URL.<p>If you have a paid Apple developer account, you can connect it with Bitrig. We’ll compile your app on our server and upload it to App Store Connect, so you can distribute it on TestFlight or the App Store. This last step also gives you a fully optimized build of your app that you can install right on your Home Screen.<p>We think there’s something electric about building apps directly on your phone. We hope you give Bitrig a try!<p>We’re ingesting Apple’s SDK frameworks into Bitrig piece by piece. If you try to build something and hit a missing framework, let us know and we’ll prioritize adding it.<p>Download Bitrig on the App Store:\\n<a href=\\\"https://apps.apple.com/us/app/bitrig/id6747835910\\\">https://apps.apple.com/us/app/bitrig/id6747835910</a>\"},\"title\":{\"matchLevel\":\"none\",\"matchedWords\":[],\"value\":\"Launch HN: Bitrig (YC S25) – Build Swift apps on your iPhone\"}},\"_tags\":[\"story\",\"author_kylemacomber\",\"story_45041185\",\"launch_hn\",\"front_page\"],\"author\":\"kylemacomber\",\"children\":[45041196,45042377,45042481,45042497,45042627,45042630,45042654,45042924,45043168,45043249,45043313,45043519,45043647,45043653,45043702,45043757,45043843,45043851,45044883,45045391,45045417,45045660,45045748,45045989,45046069,45046084,45046350,45046451,45046522,45046585,45047004,45047045,45047224,45047226,45047444,45048004,45048540,45048705,45048790,45049059,45049087,45049259,45049466,45049551],\"created_at\":\"2025-08-27T15:39:33Z\",\"created_at_i\":1756309173,\"num_comments\":96,\"objectID\":\"45041185\",\"points\":142,\"story_id\":45041185,\"story_text\":\"Hi HN, we’re Kyle, Jacob, and Tim. We’re building Bitrig (<a href=\\\"https:&#x2F;&#x2F;www.bitrig.app\\\">https:&#x2F;&#x2F;www.bitrig.app</a>).<p>Bitrig lets you create native Swift apps for your phone, on your phone, just by chatting with AI. It’s like Lovable for iPhone apps.<p>Here&#x27;s a video of Bitrig in action:\\n<a href=\\\"https:&#x2F;&#x2F;youtu.be&#x2F;CUlWhF3ERME\\\" rel=\\\"nofollow\\\">https:&#x2F;&#x2F;youtu.be&#x2F;CUlWhF3ERME</a><p>We created SwiftUI at Apple to help developers make better apps with less code. Bitrig lets anyone build at this level of polish. If you&#x27;ve thought about making an iPhone app, Bitrig is the easiest possible way to get started with Swift.<p>Bitrig uses Claude Sonnet 4.0 with a simple system prompt and tool definitions to generate native Swift code. Normally running this on an iPhone would require compiling and signing it with Xcode, and you can’t run Xcode on an iPhone. So we did something… creative. We wrote a custom Swift interpreter! Among other things this lets you instantly preview your app in Bitrig and share it with just a URL.<p>If you have a paid Apple developer account, you can connect it with Bitrig. We’ll compile your app on our server and upload it to App Store Connect, so you can distribute it on TestFlight or the App Store. This last step also gives you a fully optimized build of your app that you can install right on your Home Screen.<p>We think there’s something electric about building apps directly on your phone. We hope you give Bitrig a try!<p>We’re ingesting Apple’s SDK frameworks into Bitrig piece by piece. If you try to build something and hit a missing framework, let us know and we’ll prioritize adding it.<p>Download Bitrig on the App Store:\\n<a href=\\\"https:&#x2F;&#x2F;apps.apple.com&#x2F;us&#x2F;app&#x2F;bitrig&#x2F;id6747835910\\\">https:&#x2F;&#x2F;apps.apple.com&#x2F;us&#x2F;app&#x2F;bitrig&#x2F;id6747835910</a>\",\"title\":\"Launch HN: Bitrig (YC S25) – Build Swift apps on your iPhone\",\"updated_at\":\"2025-08-28T09:03:11Z\"}]"
+            },
+            {
+              "action": {
+                "tool": "Fetch_HN_Article",
+                "toolInput": {
+                  "Article_ID": "45041185"
+                },
+                "toolCallId": "call_cYtJIijhPwMAvaxKYXka0H2W",
+                "log": "Invoking \"Fetch_HN_Article\" with {\"Article_ID\":\"45041185\"}\n",
+                "messageLog": [
+                  {
+                    "lc": 1,
+                    "type": "constructor",
+                    "id": [
+                      "langchain_core",
+                      "messages",
+                      "AIMessageChunk"
+                    ],
+                    "kwargs": {
+                      "content": "",
+                      "additional_kwargs": {
+                        "tool_calls": [
+                          {
+                            "index": 0,
+                            "id": "call_cYtJIijhPwMAvaxKYXka0H2W",
+                            "type": "function",
+                            "function": {
+                              "name": "Fetch_HN_Article",
+                              "arguments": "{\"Article_ID\": \"45041185\"}"
+                            }
+                          }
+                        ]
+                      },
+                      "response_metadata": {
+                        "prompt": 0,
+                        "completion": 0,
+                        "usage": {
+                          "prompt_tokens": 1990,
+                          "completion_tokens": 867,
+                          "total_tokens": 2857,
+                          "prompt_tokens_details": {
+                            "cached_tokens": 0,
+                            "audio_tokens": 0
+                          },
+                          "completion_tokens_details": {
+                            "reasoning_tokens": 832,
+                            "audio_tokens": 0,
+                            "accepted_prediction_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                          }
+                        },
+                        "finish_reason": "tool_calls",
+                        "system_fingerprint": "fp_c278fb013d",
+                        "model_name": "o3-mini-2025-01-31",
+                        "service_tier": "default"
+                      },
+                      "tool_call_chunks": [
+                        {
+                          "name": "Fetch_HN_Article",
+                          "args": "{\"Article_ID\": \"45041185\"}",
+                          "id": "call_cYtJIijhPwMAvaxKYXka0H2W",
+                          "index": 0,
+                          "type": "tool_call_chunk"
+                        }
+                      ],
+                      "id": "chatcmpl-C9Sqk7saYZcfyW09AJydhH5Or7rdV",
+                      "usage_metadata": {
+                        "input_tokens": 1990,
+                        "output_tokens": 867,
+                        "total_tokens": 2857,
+                        "input_token_details": {
+                          "audio": 0,
+                          "cache_read": 0
+                        },
+                        "output_token_details": {
+                          "audio": 0,
+                          "reasoning": 832
+                        }
+                      },
+                      "tool_calls": [
+                        {
+                          "name": "Fetch_HN_Article",
+                          "args": {
+                            "Article_ID": "45041185"
+                          },
+                          "id": "call_cYtJIijhPwMAvaxKYXka0H2W",
+                          "type": "tool_call"
+                        }
+                      ],
+                      "invalid_tool_calls": []
+                    }
+                  }
+                ]
+              },
+              "observation": "[{\"author\":\"kylemacomber\",\"children\":[{\"author\":\"kylemacomber\",\"children\":[{\"author\":\"rufugee\",\"children\":[],\"created_at\":\"2025-08-27T23:33:45.000Z\",\"created_at_i\":1756337625,\"id\":45046583,\"options\":[],\"parent_id\":45041196,\"points\":null,\"story_id\":45041185,\"text\":\"Hello fellow lurker. I for one am glad you are here ;-)<p>And I echo the thanks. HN has made me a better technical professional in so many ways.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"codruterdei\",\"children\":[],\"created_at\":\"2025-08-28T06:12:01.000Z\",\"created_at_i\":1756361521,\"id\":45048983,\"options\":[],\"parent_id\":45041196,\"points\":null,\"story_id\":45041185,\"text\":\"That’s great and I’m glad you feel good here. \\nI think it’s time for you to share what you found over the years on HN with us. Your curated list, if you will.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T15:40:16.000Z\",\"created_at_i\":1756309216,\"id\":45041196,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"On a personal note, I wanted to thank the HN community. I’ve been reading HN since college (for over 15 years now!) and it’s been formative in my development as a software engineer and leader.<p>I don’t pipe up very often, but I visit HN almost every day. Many of the books I read, blogs I frequent, and podcasts I listen to, I found via HN. I think it’s fair to say, if it weren’t for HN, that Bitrig wouldn’t be Bitrig and SwiftUI wouldn’t be SwiftUI.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"HellsMaddy\",\"children\":[{\"author\":\"kylemacomber\",\"children\":[],\"created_at\":\"2025-08-27T17:30:55.000Z\",\"created_at_i\":1756315855,\"id\":45042487,\"options\":[],\"parent_id\":45042377,\"points\":null,\"story_id\":45041185,\"text\":\"Heh... it definitely wasn&#x27;t an overnight approval. However, Apple has relaxed the guidelines for developer tools compared to the early days of the App Store. If you look today there are Python IDEs, Jupyter Notebooks, and various other apps that execute user generated code. The key guideline to be mindful of is 2.5.2.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T17:19:11.000Z\",\"created_at_i\":1756315151,\"id\":45042377,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Very cool! Was it difficult to get Bitrig approved on the App Store? If I had to guess just based on the idea, it seems like the sort of thing Apple would take issue with.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"FlamingMoe\",\"children\":[{\"author\":\"kylemacomber\",\"children\":[{\"author\":\"VenturingVole\",\"children\":[],\"created_at\":\"2025-08-27T22:20:44.000Z\",\"created_at_i\":1756333244,\"id\":45046058,\"options\":[],\"parent_id\":45042554,\"points\":null,\"story_id\":45041185,\"text\":\"This is really cool of you to openly share the prompt - props for that.<p>Really cool product, as someone currently attempting to build a somewhat similar internal tool I have an understanding of some of the pain points involved.<p>Please don&#x27;t allow yourselves to be bought out by Apple in the way Buddy Build were back in 2018 though! (and then shut down)\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T17:36:08.000Z\",\"created_at_i\":1756316168,\"id\":45042554,\"options\":[],\"parent_id\":45042481,\"points\":null,\"story_id\":45041185,\"text\":\"Styling apps is an area we&#x27;re excited to spend time exploring. Today in our system prompt we say &quot;ALWAYS make the design Apple-like. Use clean typography and consistent padding&#x2F;spacing.&quot; However, tbh it&#x27;s not something we carefully tested.<p>For the most part, I think the look and feel of the apps benefits from SwiftUI baking Apple&#x27;s design system into the defaults so heavily.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T17:30:11.000Z\",\"created_at_i\":1756315811,\"id\":45042481,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Neat. I just tried it out and one thing I was pleasantly surprised about was the styling it came up with. It was sleek, and it did not have the purply gradienty tailwindy styling that I always get from Claude. Did you do much to adjust the prompt for custom styles?\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"avarun\",\"children\":[{\"author\":\"jacobx\",\"children\":[{\"author\":\"avarun\",\"children\":[{\"author\":\"jacobx\",\"children\":[],\"created_at\":\"2025-08-27T20:06:18.000Z\",\"created_at_i\":1756325178,\"id\":45044481,\"options\":[],\"parent_id\":45044102,\"points\":null,\"story_id\":45041185,\"text\":\"We probably need to make this more discoverable, but if you keep swiping down on the prompt area, you can swipe it completely off screen and your app will be full screen (with a small movable floating button to exit).<p>I really like the idea of a platform for people sharing mini-apps! It would be great if people could make lightweight specialized apps for different niches and share them with less friction.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T19:38:56.000Z\",\"created_at_i\":1756323536,\"id\":45044102,\"options\":[],\"parent_id\":45042689,\"points\":null,\"story_id\":45041185,\"text\":\"I eventually had it come in another few minutes after I left the comment. And sounds good! I’ve had good success with Clerk for auth in the past.<p>Now that I’ve gotten to play around with the app I have to say I’m impressed with how smooth it feels and how well the Swift interpreter works (at least on the basic prompts I’ve tried). One suggestion: allow toggling between an “edit” mode and a “view” mode. The latter would full screen the app and hide the interface for follow up prompts, etc. that would make it easier to approximate how the app will behave in the wild.<p>I could see this eventually turning into sort of a social platform for mini-apps, by the way! Where users don’t even necessarily need to publish to the App Store if they’re just creating something for themselves and a few friends.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T17:46:23.000Z\",\"created_at_i\":1756316783,\"id\":45042689,\"options\":[],\"parent_id\":45042497,\"points\":null,\"story_id\":45041185,\"text\":\"That&#x27;s weird, can you try hitting back and then the forward arrow again? That should resend the email. If that still doesn&#x27;t work, let me know and we can investigate on the backend.<p>We&#x27;ve definitely been hearing from users who don&#x27;t like OTP, we&#x27;ll try to get additional login options added soon.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"sunnybeetroot\",\"children\":[{\"author\":\"avarun\",\"children\":[],\"created_at\":\"2025-08-27T19:31:57.000Z\",\"created_at_i\":1756323117,\"id\":45044006,\"options\":[],\"parent_id\":45043155,\"points\":null,\"story_id\":45041185,\"text\":\"It’s 2 extra button clicks to generate a password and save it on 1Password, and you never have to leave your current context.<p>Versus for email OTP you have to switch to your email client, find the email, perhaps refresh a few times waiting for it to come in, click into the email once you see it, highlight the OTP, click copy, then switch back to the app and finally paste. I don’t understand how anybody could possibly prefer it.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T18:24:34.000Z\",\"created_at_i\":1756319074,\"id\":45043155,\"options\":[],\"parent_id\":45042497,\"points\":null,\"story_id\":45041185,\"text\":\"That’s interesting, on a desktop device I would agree. However having to create an account on 1Password for an app I just want to try is a pain compared to using Apple’s Hide my email and entering in the OTP. I get that it didn’t work for you but it did for me.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T17:31:38.000Z\",\"created_at_i\":1756315898,\"id\":45042497,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Seems like a cool concept! I downloaded and entered an email address but haven&#x27;t received a verification code yet after 10 minutes. It&#x27;s an Apple Private Relay email if that matters.<p>Also, side note: magic link or email-based OTP login is <i>by far</i> my least favorite method of login, especially for a phone app. It&#x27;s cumbersome, annoying, and completely unnecessary now that passkeys exist. Barring that I&#x27;d still rather use email&#x2F;pw login any day of the week.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"Johnny_Bonk\",\"children\":[{\"author\":\"jacobx\",\"children\":[],\"created_at\":\"2025-08-27T17:50:53.000Z\",\"created_at_i\":1756317053,\"id\":45042741,\"options\":[],\"parent_id\":45042627,\"points\":null,\"story_id\":45041185,\"text\":\"We don&#x27;t currently have support for editing code directly within a repository, but that&#x27;s something we&#x27;re excited about adding.<p>In the meantime, one thing that&#x27;s worked well for us is building a component&#x2F;screen&#x2F;etc as a standalone piece in bitrig, and then bringing it into a larger project from your computer later. You can easily export the code you make in bitrig for those kinds of workflows.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T17:41:17.000Z\",\"created_at_i\":1756316477,\"id\":45042627,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"So I have an existing typescript project, can I still use your software to build the app part of it in a monorepo?\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"saadn92\",\"children\":[{\"author\":\"jacobx\",\"children\":[],\"created_at\":\"2025-08-27T18:03:47.000Z\",\"created_at_i\":1756317827,\"id\":45042923,\"options\":[],\"parent_id\":45042630,\"points\":null,\"story_id\":45041185,\"text\":\"With what we&#x27;ve tried so far, Bitrig already works well for prototyping and making smaller apps.<p>Really large and complex apps will probably require improvements to both Bitrig and the underlying models. However, both those are coming :)\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T17:41:40.000Z\",\"created_at_i\":1756316500,\"id\":45042630,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"This is a really good idea, but I’ve noticed that, even with developer experience and using Claude code, building a complex app is extremely difficult and takes dozens of prompts to get things actually working. This is probably a great prototyping tool, but I’m curious to know how far this can go to build production level apps.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"ForceBru\",\"children\":[{\"author\":\"CharlesW\",\"children\":[],\"created_at\":\"2025-08-27T17:48:05.000Z\",\"created_at_i\":1756316885,\"id\":45042704,\"options\":[],\"parent_id\":45042654,\"points\":null,\"story_id\":45041185,\"text\":\"There&#x27;s the excellent Swift Playground for iOS, requires an iPad: <a href=\\\"https:&#x2F;&#x2F;developer.apple.com&#x2F;swift-playground&#x2F;\\\" rel=\\\"nofollow\\\">https:&#x2F;&#x2F;developer.apple.com&#x2F;swift-playground&#x2F;</a>\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"kylemacomber\",\"children\":[{\"author\":\"ForceBru\",\"children\":[{\"author\":\"kylemacomber\",\"children\":[],\"created_at\":\"2025-08-27T18:13:37.000Z\",\"created_at_i\":1756318417,\"id\":45043032,\"options\":[],\"parent_id\":45042979,\"points\":null,\"story_id\":45041185,\"text\":\"Cool, that&#x27;s really helpful context. We&#x27;ll take a look at the code editing experience in those apps for inspiration.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"Terretta\",\"children\":[],\"created_at\":\"2025-08-28T03:29:56.000Z\",\"created_at_i\":1756351796,\"id\":45048067,\"options\":[],\"parent_id\":45042979,\"points\":null,\"story_id\":45041185,\"text\":\"I use both those for Python, very much enjoy them on iPhone in particular for little UI apps. Equivalent iPad workflow for me had been Swift Playground on iPad and Mac, although it seems stuck about a year ago at Swift 5.10 and iOS 17.5 SDK.<p>Much slower (minutes) with Xcode Cloud and a git repo, if I can git commit from my iPhone, I can edit app code and commit, watch Xcode Cloud Build see my commit, watch it build with debug logs, and when it works it shows up in TestFlight.  Very much not offline, and minutes long loop.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T18:08:18.000Z\",\"created_at_i\":1756318098,\"id\":45042979,\"options\":[],\"parent_id\":45042808,\"points\":null,\"story_id\":45041185,\"text\":\"I&#x27;m imagining quick prototyping (including on-device, offline execution) of small pieces of code (potentially growing into a small app) with the software keyboard, like in Pythonista or Pyto.<p>My workflow often goes like this: got an idea, let me quickly test it on the go, like while walking down the street, working on unrelated stuff or just chilling. Open up Pythonista, write some code, run it, tweak it, etc. If a piece of code becomes important enough, I copy it to the computer and continue working on it there.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T17:55:43.000Z\",\"created_at_i\":1756317343,\"id\":45042808,\"options\":[],\"parent_id\":45042654,\"points\":null,\"story_id\":45041185,\"text\":\"You can edit the code directly in Bitrig, but we haven&#x27;t optimized the experience around that.<p>Are you imagining you&#x27;d be editing the code with the software keyboard or a paired hardware keyboard?\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T17:43:45.000Z\",\"created_at_i\":1756316625,\"id\":45042654,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Are there iOS apps that let me create native Swift apps for my phone (including execution on my device, not in the cloud), on my phone, but _without_ chatting to AI? Just by writing code, the &quot;old&quot; way?\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"Erazal\",\"children\":[{\"author\":\"Erazal\",\"children\":[{\"author\":\"tdonnelly\",\"children\":[{\"author\":\"Erazal\",\"children\":[],\"created_at\":\"2025-08-27T19:47:55.000Z\",\"created_at_i\":1756324075,\"id\":45044225,\"options\":[],\"parent_id\":45043213,\"points\":null,\"story_id\":45041185,\"text\":\"Sorry for the support query here - but I’m blocked in a bus and am HOOKED.<p>At the moment the prompt just loops for a second and then produces no answer :(\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T18:29:00.000Z\",\"created_at_i\":1756319340,\"id\":45043213,\"options\":[],\"parent_id\":45043187,\"points\":null,\"story_id\":45041185,\"text\":\"Thanks for the feedback - that one has come up before so stay tuned for updates.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T18:27:00.000Z\",\"created_at_i\":1756319220,\"id\":45043187,\"options\":[],\"parent_id\":45042924,\"points\":null,\"story_id\":45041185,\"text\":\"Quick note: it’s hard to pull down the prompt panel down, and makes for a frustrating UX (just there)\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"tdonnelly\",\"children\":[],\"created_at\":\"2025-08-27T18:27:19.000Z\",\"created_at_i\":1756319239,\"id\":45043191,\"options\":[],\"parent_id\":45042924,\"points\":null,\"story_id\":45041185,\"text\":\"Great, excited to see what you build with the bitrig. Definitely reach out with any questions or features you’d like to see!\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T18:03:53.000Z\",\"created_at_i\":1756317833,\"id\":45042924,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"I’ve just tested it out, and purchased a subscription within 5 minutes, for an app we were seriously discussing with a friend over the last days.<p>Keep crushing!\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"ChrisArchitect\",\"children\":[{\"author\":\"travisgriggs\",\"children\":[],\"created_at\":\"2025-08-27T20:53:42.000Z\",\"created_at_i\":1756328022,\"id\":45045114,\"options\":[],\"parent_id\":45043249,\"points\":null,\"story_id\":45041185,\"text\":\"My mind immediately reread your comment using Bawwy Kwipke&#x27;s voice. I think I&#x27;ve watched too much BBT at this point.<p>(<a href=\\\"https:&#x2F;&#x2F;bigbangtheory.fandom.com&#x2F;wiki&#x2F;Barry_Kripke\\\" rel=\\\"nofollow\\\">https:&#x2F;&#x2F;bigbangtheory.fandom.com&#x2F;wiki&#x2F;Barry_Kripke</a>)\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T18:31:33.000Z\",\"created_at_i\":1756319493,\"id\":45043249,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Not to be confused with Bitwig music production studio&#x2F;software.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"sidchilling\",\"children\":[{\"author\":\"jacobx\",\"children\":[{\"author\":\"sidchilling\",\"children\":[],\"created_at\":\"2025-08-28T05:40:57.000Z\",\"created_at_i\":1756359657,\"id\":45048795,\"options\":[],\"parent_id\":45043351,\"points\":null,\"story_id\":45041185,\"text\":\"ios 18.1.1\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T18:39:31.000Z\",\"created_at_i\":1756319971,\"id\":45043351,\"options\":[],\"parent_id\":45043313,\"points\":null,\"story_id\":45041185,\"text\":\"Sorry to hear that! What version of iOS are you running?\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T18:36:49.000Z\",\"created_at_i\":1756319809,\"id\":45043313,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"I downloaded the app but it keeps crashing on open\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"sukh\",\"children\":[{\"author\":\"jacobx\",\"children\":[{\"author\":\"w10-1\",\"children\":[],\"created_at\":\"2025-08-27T19:23:00.000Z\",\"created_at_i\":1756322580,\"id\":45043884,\"options\":[],\"parent_id\":45043780,\"points\":null,\"story_id\":45041185,\"text\":\"It would be lovely if the community had this knowledge about API&#x27;s to avoid and approached to adopt. SwiftUI programming is a tightrope walk of stuff that works over a chasm of time lost to testing.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T19:13:35.000Z\",\"created_at_i\":1756322015,\"id\":45043780,\"options\":[],\"parent_id\":45043519,\"points\":null,\"story_id\":45041185,\"text\":\"Yeah, the prompt is just asking Claude to generate a SwiftUI iPhone app. The recent models have been able to generate really good Swift code, so we just have a set of best practice instructions we&#x27;ve been accumulating (telling it to make an app with @main, pointing it to&#x2F;away from some APIs, encouraging it to persist things in UserDefaults, etc).<p>I think most of that would work pretty well for making SwiftUI desktop apps too.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T18:53:47.000Z\",\"created_at_i\":1756320827,\"id\":45043519,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"I’ve been playing with the TestFlight build and it’s really solid. Can you share any under the hood details of how the system is able to accurately map the loose prompt to fully native SwiftUI components. Mostly curious because I’d love to also build internal data dense apps typically better suited for desktop.<p>Great work and I hope to become a paying customer soon!\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"fragmede\",\"children\":[{\"author\":\"kylemacomber\",\"children\":[{\"author\":\"wahnfrieden\",\"children\":[],\"created_at\":\"2025-08-27T19:50:33.000Z\",\"created_at_i\":1756324233,\"id\":45044273,\"options\":[],\"parent_id\":45043725,\"points\":null,\"story_id\":45041185,\"text\":\"I always do my dev testing on the smallest and largest iPhones. I recommend going with smallest only as your primary driver if you don’t make use of the sidebar behaviors on the largest ones.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T19:09:39.000Z\",\"created_at_i\":1756321779,\"id\":45043725,\"options\":[],\"parent_id\":45043647,\"points\":null,\"story_id\":45041185,\"text\":\"Thanks for the heads up. I confess, I did not test it on an SE. We&#x27;ll take a look!\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T19:04:11.000Z\",\"created_at_i\":1756321451,\"id\":45043647,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"I&#x27;m on an iPhone SE, and the UI doesn&#x27;t quite fit. The response text isn&#x27;t easily scrollable, so I have to drag the text up, instead of just scrolling.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"pybae\",\"children\":[],\"created_at\":\"2025-08-27T19:04:29.000Z\",\"created_at_i\":1756321469,\"id\":45043653,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"this is super super cool - awesome to see something technically hard and novel. congrats on the launch!\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"WhitneyLand\",\"children\":[{\"author\":\"kylemacomber\",\"children\":[],\"created_at\":\"2025-08-27T19:18:41.000Z\",\"created_at_i\":1756322321,\"id\":45043834,\"options\":[],\"parent_id\":45043702,\"points\":null,\"story_id\":45041185,\"text\":\"Ya, I agree it makes sense for us to record a more tutorial length demo at this point and we can show off things like that.<p>Thanks for the tip about the mic. Fun fact: it&#x27;s me in the video, but it&#x27;s Jacob doing the narration :P\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T19:07:40.000Z\",\"created_at_i\":1756321660,\"id\":45043702,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Hey Kyle, looks very cool!<p>- If Bitrig can do things like let your app have editable data, or make rest api calls, etc. it would be nice to see a little more in the demo video.<p>- Sounds like you don’t have an expensive mic&#x2F;studio for recording, but luckily this is free and can work wonders for your audio:\\n<a href=\\\"https:&#x2F;&#x2F;podcast.adobe.com&#x2F;en&#x2F;enhance\\\" rel=\\\"nofollow\\\">https:&#x2F;&#x2F;podcast.adobe.com&#x2F;en&#x2F;enhance</a><p>Best of luck with the launch.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"saaaaaam\",\"children\":[{\"author\":\"jacobx\",\"children\":[],\"created_at\":\"2025-08-27T19:22:01.000Z\",\"created_at_i\":1756322521,\"id\":45043871,\"options\":[],\"parent_id\":45043757,\"points\":null,\"story_id\":45041185,\"text\":\"Sorry about that, I reset your free messages for the day, so you should be back at 5.<p>Moving in and out of the project while messages are sending is a more fragile area of the app and we have some bugs to fix there.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T19:12:11.000Z\",\"created_at_i\":1756321931,\"id\":45043757,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Doesn’t work at all for me.<p>Entered my my prompt… It did a bunch of stuff - apparently initially focused on making me an app icon which I don’t really care about.<p>I moved away from the app, went back and everything had gone and my prompt was just sitting there by itself.<p>I said “please proceed” and it opened a new chat, did the same thing.  It was doing stuff, I moved to something else, went back, everything vanished.<p>So that’s two of my five free messages zapped. And all of my patience.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"markden\",\"children\":[{\"author\":\"kylemacomber\",\"children\":[{\"author\":\"markden\",\"children\":[{\"author\":\"kylemacomber\",\"children\":[],\"created_at\":\"2025-08-27T20:57:06.000Z\",\"created_at_i\":1756328226,\"id\":45045166,\"options\":[],\"parent_id\":45044121,\"points\":null,\"story_id\":45041185,\"text\":\"There&#x27;s a lot I want to do to improve the prompting experience. As I mentioned in the original post, it&#x27;s very simple right now.<p>There&#x27;s a lot of inspiration we could (and probably will) draw from other products (e.g. Cline&#x27;s Plan vs Act modes) to build what you&#x27;re describing.<p>It can also be really fun and productive to just rapidly iterate on what the AI gives back, without having to take the time to describe it all up front. Sometimes this approach can lead to a new directions you might not have thought of.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T19:40:59.000Z\",\"created_at_i\":1756323659,\"id\":45044121,\"options\":[],\"parent_id\":45043966,\"points\":null,\"story_id\":45041185,\"text\":\"Your secret is safe, hah! It&#x27;s almost like you need an intermediate &#x27;cheap&#x2F;dumb&#x27; AI as a proxy to flesh everything out ahead of sending it off to be coded ... something that crisps up all the requirement and ultimately crafts a more cost-effective and likely all-around-better prompt. Even being semi-technical, I&#x27;m always surprised how much the details matter when describing something to AI (e.g., the fireworks should only explode _outward_, not inward, lol). Thanks!\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T19:29:11.000Z\",\"created_at_i\":1756322951,\"id\":45043966,\"options\":[],\"parent_id\":45043843,\"points\":null,\"story_id\":45041185,\"text\":\"Don&#x27;t tell anyone, but once you&#x27;re on the paid plan we&#x27;re not actually enforcing the 100 message limit right now ;)<p>We&#x27;re still in the learning phase, and are going to adjust the plans based on exactly the kind of considerations you&#x27;re raising\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T19:19:36.000Z\",\"created_at_i\":1756322376,\"id\":45043843,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"First, as a non-developer geek -- super fun.<p>What happens if you go over 100 messages&#x2F;month?<p>I just burned my 5 free messages to get a simple toggle button working that just says &quot;win&quot; (with animated fireworks!) and &quot;lose&quot;. I&#x27;m sure I&#x27;m not an efficient prompter, but it seems I&#x27;d knock out 100 messages easily in an afternoon, which looks to be the monthly limit at $20&#x2F;mo.<p>(This is coming from someone who has no idea how expensive it would be to &#x27;vibe code&#x27; using something like Claude ... so it may be an entirely unfair assumption that you could chat with this &#x27;unlimited&#x27; for $20&#x2F;mo ... that&#x27;s what I have in my head as &#x27;reasonable&#x27; only because that&#x27;s what I pay for Gemini or ChatGPT and, for all intents and purposes, it feels &#x27;unlimited&#x27;.)\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"jaccola\",\"children\":[{\"author\":\"jacobx\",\"children\":[{\"author\":\"ignoramous\",\"children\":[{\"author\":\"jacobx\",\"children\":[],\"created_at\":\"2025-08-27T23:47:05.000Z\",\"created_at_i\":1756338425,\"id\":45046682,\"options\":[],\"parent_id\":45046212,\"points\":null,\"story_id\":45041185,\"text\":\"There’s still a lot to do to make this work really great for the Swift ecosystem, and that’s where we have the most expertise, so that’s what we’ll be focused on for now.<p>That said, we think this same approach could work really well on Android, and it’d be interesting to expand there too.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T22:40:05.000Z\",\"created_at_i\":1756334405,\"id\":45046212,\"options\":[],\"parent_id\":45044031,\"points\":null,\"story_id\":45041185,\"text\":\"Nice. Are you folks thinking about Kotlin&#x2F;Flutter on Android too, or is it going to be exclusively focused on the ecosystem around Swift?\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T19:34:04.000Z\",\"created_at_i\":1756323244,\"id\":45044031,\"options\":[],\"parent_id\":45043851,\"points\":null,\"story_id\":45041185,\"text\":\"Yeah, I think that whole area of dynamically generating UI is really interesting. And having a Swift interpreter like we&#x27;re using would unlock doing that with native UI components.<p>Our background is more in making developer tools, so bitrig was the first product we were excited about, but I think there&#x27;s a lot of overlap with dynamic UI generation, and we&#x27;d love to explore that too.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"spike021\",\"children\":[],\"created_at\":\"2025-08-28T07:43:51.000Z\",\"created_at_i\":1756367031,\"id\":45049535,\"options\":[],\"parent_id\":45043851,\"points\":null,\"story_id\":45041185,\"text\":\"Maybe this paired with something like App Clips? I don&#x27;t see them used much these days but could make them more useful.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T19:20:22.000Z\",\"created_at_i\":1756322422,\"id\":45043851,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"It doesn&#x27;t seem like this is the direction you are going, but this feels like what Siri <i>could</i> become (though I have little faith given the history).<p>With your sunscreen example, I should be able to just ask Siri to do exactly this, and it could tap me in my pocket, show me a custom UI to log periodically and then disappear.<p>Not sure on limitations of APIs on iOS but definitely feels like there is space for a better voice assistant, just like how Raycast have created a better Spotlight on Mac.<p>Looks very cool so far!\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"ripped_britches\",\"children\":[{\"author\":\"jacobx\",\"children\":[],\"created_at\":\"2025-08-27T20:43:18.000Z\",\"created_at_i\":1756327398,\"id\":45044970,\"options\":[],\"parent_id\":45044883,\"points\":null,\"story_id\":45041185,\"text\":\"Totally agree, we have a lot of ideas for how to make the experience better.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"travisgriggs\",\"children\":[{\"author\":\"igouy\",\"children\":[],\"created_at\":\"2025-08-27T22:32:03.000Z\",\"created_at_i\":1756333923,\"id\":45046152,\"options\":[],\"parent_id\":45045039,\"points\":null,\"story_id\":45041185,\"text\":\"Concern about app security?\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"mrbombastic\",\"children\":[],\"created_at\":\"2025-08-27T22:41:53.000Z\",\"created_at_i\":1756334513,\"id\":45046226,\"options\":[],\"parent_id\":45045039,\"points\":null,\"story_id\":45041185,\"text\":\"native app development is harder not because of some inherent complexity mostly but because you are shipping binaries through 3rd parties you don’t control which makes versioning an annoying problem web devs don’t have to deal with, app review makes true continuous delivery pretty much impossible and also means true rollbacks are pretty much impossible (i know about codepush and expo updates), proprietary core and dev setup limits dev tooling also\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T20:48:47.000Z\",\"created_at_i\":1756327727,\"id\":45045039,\"options\":[],\"parent_id\":45044883,\"points\":null,\"story_id\":45041185,\"text\":\"I don&#x27;t share your assessment. Is it because I did iOS apps before web apps? Curious how many others feel the same?<p>Seems like a reasonable poll question: Which is harder: web app development or native app development?<p>I was telling a younger colleague the other day how back in the day, I was &quot;competing&quot; with a peer at a company doing nuclear design software (Siemens Power Corp at the time). I was doing it in VisualWorks Smalltalk, he was doing his in straight C and X Windows. Competition aside, both of us built multi window complex graphical design tools that front ended heavy duty simulators, managed various batch jobs, tons of IO, parsing, and lots of color graphic drawing (mine was for fuel assembly (pin and axial enrichments) design, and his was for core layout (where the assemblies go during each reload)). The graphics were simpler (no antialiasing, any alpha we did with clever dithering tricks, not much in the way of animations, though we did each roll some). Both even stored &#x2F;retrieved into a sort of database (a homegrown data versioning system). But... it was just one of each us for each &quot;app&quot;.<p>Sadly, all Ux development seems orders of more magnitude complicated and beuqacratic now days. Some things are easier and vastly simpler than they used to be, and yet, the sum result is more difficult. I&#x27;m not exactly sure why.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T20:37:11.000Z\",\"created_at_i\":1756327031,\"id\":45044883,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"I love what you guys are doing but highlights how absurdly hard iOS development is compared to web\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"rcarmo\",\"children\":[{\"author\":\"brandnewlow\",\"children\":[],\"created_at\":\"2025-08-28T04:03:50.000Z\",\"created_at_i\":1756353830,\"id\":45048253,\"options\":[],\"parent_id\":45045391,\"points\":null,\"story_id\":45041185,\"text\":\"Amen, brother.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T21:16:19.000Z\",\"created_at_i\":1756329379,\"id\":45045391,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"I wish Apple would let us build and install these apps locally without fuss.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"chipheat\",\"children\":[{\"author\":\"throwawaylaptop\",\"children\":[],\"created_at\":\"2025-08-27T22:03:00.000Z\",\"created_at_i\":1756332180,\"id\":45045890,\"options\":[],\"parent_id\":45045660,\"points\":null,\"story_id\":45041185,\"text\":\"Chrome on android is stuck too.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"jacobx\",\"children\":[],\"created_at\":\"2025-08-27T22:09:33.000Z\",\"created_at_i\":1756332573,\"id\":45045953,\"options\":[],\"parent_id\":45045660,\"points\":null,\"story_id\":45041185,\"text\":\"Thanks for letting us know, we&#x27;ll get this fixed in other browsers (we&#x27;ve been just looking at it in Safari).\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T21:42:08.000Z\",\"created_at_i\":1756330928,\"id\":45045660,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"I&#x27;m using Firefox for Android, and I&#x27;m unable to scroll on the homepage at all.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"zahirbmirza\",\"children\":[{\"author\":\"kylemacomber\",\"children\":[],\"created_at\":\"2025-08-27T22:49:09.000Z\",\"created_at_i\":1756334949,\"id\":45046280,\"options\":[],\"parent_id\":45045748,\"points\":null,\"story_id\":45041185,\"text\":\"Wow that&#x27;s really high praise. Thank you.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T21:49:31.000Z\",\"created_at_i\":1756331371,\"id\":45045748,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"This app is really quite fascinating as well as amazing. I have been using it for a week now. I do like how it is so good with Swift and iOS; you have done a great job of removing so much of the confusion that LLMs must face when trying to develop for a demanding platform. The API insight the app has is a testament to your deep background and foresight into iOS development. I really love this.<p>Also, I have been taking the code and advice from Bitrig into Cursor, because it solves problems Cursor struggles with no matter what model it calls.<p>Your work is empowering, but more than that, it is inspiring, because I can now start to envisage what computer human interaction will look like in the near future.<p>You have taken away a layer of complexity to creation and that is to be applauded. I think your work is a landmark. I think Bitrig will unleash a new era of creative expression. I wish that I was part of your team.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"chwzr\",\"children\":[{\"author\":\"jacobx\",\"children\":[],\"created_at\":\"2025-08-27T22:21:08.000Z\",\"created_at_i\":1756333268,\"id\":45046064,\"options\":[],\"parent_id\":45045989,\"points\":null,\"story_id\":45041185,\"text\":\"Thanks for trying, sorry you hit that issue!<p>Could you send us feedback from your project? (Go to the ... menu, then Send Feedback.) If you&#x27;re not able to use the UI from within your project you can long-press on it from the main screen and choose Recovery Mode, and then enter the project with the interpreter disabled.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T22:13:27.000Z\",\"created_at_i\":1756332807,\"id\":45045989,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Tried to create a canvas like app view, your app froze after some prompts (guess the swift interpreter?) reopening the app and selecting the project again does not help\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"pilingual\",\"children\":[{\"author\":\"jacobx\",\"children\":[],\"created_at\":\"2025-08-27T23:44:27.000Z\",\"created_at_i\":1756338267,\"id\":45046665,\"options\":[],\"parent_id\":45046069,\"points\":null,\"story_id\":45041185,\"text\":\"Yeah we’d love to find a way to give away more in the free tier for hobbyist users and subsidize that with other things. The idea of us putting an ad in unpaid apps as another option is interesting.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T22:21:24.000Z\",\"created_at_i\":1756333284,\"id\":45046069,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"I stopped using Apple products but need to create a couple of iOS apps. I was debating buying a Mac Mini or using &quot;Macincloud&quot; but this seems like an excellent option. Being able to edit the Swift code means fixing nuances.<p>I&#x27;ll likely subscribe to your service.<p>For distribution strategy you could experiment with letting people create simple apps for free and put a perpetual ad for your service ad the bottom of the app.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"QuantumNomad_\",\"children\":[{\"author\":\"jacobx\",\"children\":[{\"author\":\"QuantumNomad_\",\"children\":[],\"created_at\":\"2025-08-28T01:07:16.000Z\",\"created_at_i\":1756343236,\"id\":45047146,\"options\":[],\"parent_id\":45046636,\"points\":null,\"story_id\":45041185,\"text\":\"Nice :)\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T23:39:56.000Z\",\"created_at_i\":1756337996,\"id\":45046636,\"options\":[],\"parent_id\":45046084,\"points\":null,\"story_id\":45041185,\"text\":\"We’ve gotten a lot of requests for WebKit, so we’ll try to add it soon.<p>If we hit issues we can try to pull in just a subset, but one nice thing about Swift is the frameworks have .swiftinterface files which list all the APIs in them, so we’ve generally been able to pull in whole frameworks at a time.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T22:22:57.000Z\",\"created_at_i\":1756333377,\"id\":45046084,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"&gt; We’re ingesting Apple’s SDK frameworks into Bitrig piece by piece. If you try to build something and hit a missing framework, let us know and we’ll prioritize adding it.<p>Submitted request for WebKit to be added.<p>In the app I asked it to make, I requested that it use a web view to log into YouTube. The generated app opens a mostly blank screen with no web view, and from what your app told me I think it’s because it’s missing WebKit.<p>WebKit as a whole might be big, but maybe some subset of it to support web views and get cookies from the web view could be supported?\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"bilbo-b-baggins\",\"children\":[{\"author\":\"jacobx\",\"children\":[],\"created_at\":\"2025-08-27T23:29:08.000Z\",\"created_at_i\":1756337348,\"id\":45046550,\"options\":[],\"parent_id\":45046350,\"points\":null,\"story_id\":45041185,\"text\":\"Yeah there’s a Send Feedback button when you’re in a project that sends feedback along with the code for that project.<p>We also have a discord here:\\n<a href=\\\"https:&#x2F;&#x2F;discord.com&#x2F;invite&#x2F;C7ndWKKq2S\\\" rel=\\\"nofollow\\\">https:&#x2F;&#x2F;discord.com&#x2F;invite&#x2F;C7ndWKKq2S</a>\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T22:57:50.000Z\",\"created_at_i\":1756335470,\"id\":45046350,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Huh I was just thinking vibe coding on my phone while having a beer would be fun. I’ll check it out. Is there a good way to give feedback? I didn’t see any obvious community&#x2F;contact&#x2F;discord&#x2F;discourse on the website.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"dcreater\",\"children\":[{\"author\":\"rvz\",\"children\":[],\"created_at\":\"2025-08-28T00:42:11.000Z\",\"created_at_i\":1756341731,\"id\":45047018,\"options\":[],\"parent_id\":45046451,\"points\":null,\"story_id\":45041185,\"text\":\"Given they haven&#x27;t replied, I assume that they are certainly collecting data from how you are using those prompts to build your apps and also with the outputs.<p>So don&#x27;t paste any tokens or keys into these AI tools.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"tdonnelly\",\"children\":[],\"created_at\":\"2025-08-28T01:11:27.000Z\",\"created_at_i\":1756343487,\"id\":45047184,\"options\":[],\"parent_id\":45046451,\"points\":null,\"story_id\":45041185,\"text\":\"Is there a certain part of the data that the service collects that you&#x27;re wondering about?<p>We aren&#x27;t doing anything shady or unexpected with the data given the server-based model – projects are stored on the Bitrig server, but we aren&#x27;t selling the data, using it for training, etc.<p>We may use the data to improve Bitrig in the future (e.g. by gathering information on the popularity of certain APIs to prioritize bug fixes and new features).<p>All AI requests use Claude, which of course sends some data to Anthropic.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T23:14:18.000Z\",\"created_at_i\":1756336458,\"id\":45046451,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"The data collection is very concerning and is preventing me from using the app though I want to\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"7thpixel\",\"children\":[{\"author\":\"jacobx\",\"children\":[],\"created_at\":\"2025-08-28T00:22:26.000Z\",\"created_at_i\":1756340546,\"id\":45046917,\"options\":[],\"parent_id\":45046522,\"points\":null,\"story_id\":45041185,\"text\":\"I think that’s a pretty good list. The main one I would add is “creators will want to make native Swift apps to have a better user experience”\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T23:24:21.000Z\",\"created_at_i\":1756337061,\"id\":45046522,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"What big assumptions are you testing with it?<p>I pasted your URL into my app and it came up with:<p>- Non-developers want to create mobile apps without coding.\\n- Users are willing to pay for an AI-powered mobile app builder.\\n- AI can generate functional apps using only a conversational interface.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"lemming\",\"children\":[{\"author\":\"jacobx\",\"children\":[],\"created_at\":\"2025-08-27T23:54:33.000Z\",\"created_at_i\":1756338873,\"id\":45046727,\"options\":[],\"parent_id\":45046585,\"points\":null,\"story_id\":45041185,\"text\":\"Yeah that’s been my experience too. You can edit the Swift code directly in bitrig, though editing code on a phone is not the best experience. We’ve had a lot of requests for a Mac app. Stay tuned ;)<p>You can get a compiled build of your app from bitrig: go to Distribute App which will build your app on our server and then upload it to TestFlight for you (this requires a paid Apple Developer Account). This lets you install the compiled app on your Home Screen. You could also always export the code if you want to build it yourself.\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T23:34:17.000Z\",\"created_at_i\":1756337657,\"id\":45046585,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"With vibe coding, I generally find that it will get me 80-90% of the way to where I want to be, but I generally end up having to do some work too. How does that work here? Is there any way to later edit the app on my mac if I need to? Similarly, once my app is &quot;done&quot; for some definition of done, can I compile it into a native app rather than an interpreted one?\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"myflash13\",\"children\":[],\"created_at\":\"2025-08-28T00:39:54.000Z\",\"created_at_i\":1756341594,\"id\":45047004,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"This is what Apple Intelligence should’ve been.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"saagarjha\",\"children\":[{\"author\":\"jacobx\",\"children\":[],\"created_at\":\"2025-08-28T01:00:41.000Z\",\"created_at_i\":1756342841,\"id\":45047113,\"options\":[],\"parent_id\":45047045,\"points\":null,\"story_id\":45041185,\"text\":\"Yeah this is an area we want to make a lot better. What we&#x27;re currently thinking is giving the model a way to more explicitly call out that it is adding a call to something that needs an API key, which would add something to the UI to allow you to just paste in your key.<p>I think there&#x27;s also work when need to do in the system prompt to guide the model away from all of the placeholder data (or at least so that when it adds it there&#x27;s a better affordance to transform it to real data).\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-28T00:48:11.000Z\",\"created_at_i\":1756342091,\"id\":45047045,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"I&#x27;ve been using the app a bit and I like the idea but one of the major things keeping me from using it is that the model is just fundamentally lazy and without having an easy way to review the code on my phone it&#x27;s not easy to check its work. If it needs to do something which requires talking to a web API it will often just populate the app with fake data silently. Apps for phones are very dependent on web APIs and with people heavily locking this down these days (when&#x27;s the last time you&#x27;ve used an API that doesn&#x27;t ask you for an API token?) I feel like most of the apps are limited to being local-only. There are plenty of nice local-only apps on iPhone, don&#x27;t get me wrong. I&#x27;m sure there is a timer app that is <i>just right</i> for everyone. But most of my tasks require more context about my life, or the outside world. Bitrig isn&#x27;t able to oneshot this yet–but it definitely does make pretty UIs.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"LeicaLatte\",\"children\":[],\"created_at\":\"2025-08-28T01:18:35.000Z\",\"created_at_i\":1756343915,\"id\":45047224,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Very cool. I would probably build this using SDUI server driven abstractions. Curious if you considered that approach to build bitrig or parts of it.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"debdut\",\"children\":[],\"created_at\":\"2025-08-28T01:53:19.000Z\",\"created_at_i\":1756345999,\"id\":45047444,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"This is crazy, you guys basically rebuilt Swift (interpreter instead of compiler) and also the frameworks. This is the level of engineering that does the magic of &quot;it just works&quot;. I, personally, am very interested in swift, and would love to work for free for you guys.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"igmn\",\"children\":[],\"created_at\":\"2025-08-28T03:20:48.000Z\",\"created_at_i\":1756351248,\"id\":45048004,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Consider adding BYOK&#x2F;Bring your own API for LLM calls if possible, some of us like to keep our data with ourselves, no matter what that data is.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"shlomo_z\",\"children\":[],\"created_at\":\"2025-08-28T04:59:06.000Z\",\"created_at_i\":1756357146,\"id\":45048540,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Hey,<p>I do not own an iPhone and I do not use swift. I just want to say congrats on the launch, this looks and sounds really cool. And watching your interactions in this thread, you look like you&#x27;ll do really well!\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"shera_12\",\"children\":[],\"created_at\":\"2025-08-28T05:24:51.000Z\",\"created_at_i\":1756358691,\"id\":45048705,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Just bought my iphone16 yesterday<p>Going to try this now\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"erichi\",\"children\":[],\"created_at\":\"2025-08-28T05:40:29.000Z\",\"created_at_i\":1756359629,\"id\":45048790,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Apart from this great app, what is the current state of the art in vibe coding iOS apps? Just using Cursor with an open iOS simulator?\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"iddan\",\"children\":[],\"created_at\":\"2025-08-28T06:25:32.000Z\",\"created_at_i\":1756362332,\"id\":45049059,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"When I was in middle school I remember a friend lieing that there is “a mobile app to create mobile apps”. I thought it’s an amazing idea, but it was way too early. I love how this hallucination became a reality. Good luck!\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"mandeepj\",\"children\":[],\"created_at\":\"2025-08-28T06:29:15.000Z\",\"created_at_i\":1756362555,\"id\":45049087,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Did you just casually built a workout posture tracking and rep counting app? :-)<p>Anyway, congrats on the launch!!\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"MMoe\",\"children\":[],\"created_at\":\"2025-08-28T06:58:19.000Z\",\"created_at_i\":1756364299,\"id\":45049259,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"For some reason I dislike Log-In by Mail. Since this is purely based on iOS devices, log-in with Apple seems to be an obvious and frictionless solution.\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"cslosiu\",\"children\":[],\"created_at\":\"2025-08-28T07:32:03.000Z\",\"created_at_i\":1756366323,\"id\":45049466,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"PRO payment is per month or per year?\",\"title\":null,\"type\":\"comment\",\"url\":null},{\"author\":\"spike021\",\"children\":[],\"created_at\":\"2025-08-28T07:47:00.000Z\",\"created_at_i\":1756367220,\"id\":45049551,\"options\":[],\"parent_id\":45041185,\"points\":null,\"story_id\":45041185,\"text\":\"Would you consider having a way to export work done in this app to be included as part of regular Xcode projects?<p>I&#x27;ve been working on a project and sometimes when I&#x27;m away from my laptop I have ideas I want to try in SwiftUI but only have my phone on me. What I end up doing is just writing my idea in text and then waiting till I&#x27;m back at my desk to give it a shot. Being able to spin up a quick prototype and preview it on the go could be cool.<p>I don&#x27;t think my dog would enjoy me lugging my laptop on our walks but my phone is no big deal ;).\",\"title\":null,\"type\":\"comment\",\"url\":null}],\"created_at\":\"2025-08-27T15:39:33.000Z\",\"created_at_i\":1756309173,\"id\":45041185,\"options\":[],\"parent_id\":null,\"points\":142,\"story_id\":45041185,\"text\":\"Hi HN, we’re Kyle, Jacob, and Tim. We’re building Bitrig (<a href=\\\"https:&#x2F;&#x2F;www.bitrig.app\\\">https:&#x2F;&#x2F;www.bitrig.app</a>).<p>Bitrig lets you create native Swift apps for your phone, on your phone, just by chatting with AI. It’s like Lovable for iPhone apps.<p>Here&#x27;s a video of Bitrig in action:\\n<a href=\\\"https:&#x2F;&#x2F;youtu.be&#x2F;CUlWhF3ERME\\\" rel=\\\"nofollow\\\">https:&#x2F;&#x2F;youtu.be&#x2F;CUlWhF3ERME</a><p>We created SwiftUI at Apple to help developers make better apps with less code. Bitrig lets anyone build at this level of polish. If you&#x27;ve thought about making an iPhone app, Bitrig is the easiest possible way to get started with Swift.<p>Bitrig uses Claude Sonnet 4.0 with a simple system prompt and tool definitions to generate native Swift code. Normally running this on an iPhone would require compiling and signing it with Xcode, and you can’t run Xcode on an iPhone. So we did something… creative. We wrote a custom Swift interpreter! Among other things this lets you instantly preview your app in Bitrig and share it with just a URL.<p>If you have a paid Apple developer account, you can connect it with Bitrig. We’ll compile your app on our server and upload it to App Store Connect, so you can distribute it on TestFlight or the App Store. This last step also gives you a fully optimized build of your app that you can install right on your Home Screen.<p>We think there’s something electric about building apps directly on your phone. We hope you give Bitrig a try!<p>We’re ingesting Apple’s SDK frameworks into Bitrig piece by piece. If you try to build something and hit a missing framework, let us know and we’ll prioritize adding it.<p>Download Bitrig on the App Store:\\n<a href=\\\"https:&#x2F;&#x2F;apps.apple.com&#x2F;us&#x2F;app&#x2F;bitrig&#x2F;id6747835910\\\">https:&#x2F;&#x2F;apps.apple.com&#x2F;us&#x2F;app&#x2F;bitrig&#x2F;id6747835910</a>\",\"title\":\"Launch HN: Bitrig (YC S25) – Build Swift apps on your iPhone\",\"type\":\"story\",\"url\":null}]"
+            }
+          ]
+        }
+      }
+    ],
+    "Create Avatar Video": [
+      {
+        "json": {
+          "error": null,
+          "data": {
+            "video_id": "667780c6df884e9ab571243307cd69c1"
+          }
+        }
+      }
+    ],
+    "Wait": [
+      {
+        "json": {
+          "error": null,
+          "data": {
+            "video_id": "667780c6df884e9ab571243307cd69c1"
+          }
+        }
+      }
+    ],
+    "Get Avatar Video": [
+      {
+        "json": {
+          "code": 100,
+          "data": {
+            "callback_id": null,
+            "caption_url": "",
+            "created_at": 1756372641,
+            "duration": 52.228,
+            "error": null,
+            "gif_url": "https://resource2.heygen.ai/video/667780c6df884e9ab571243307cd69c1/gif.gif",
+            "id": "667780c6df884e9ab571243307cd69c1",
+            "status": "completed",
+            "thumbnail_url": "https://files2.heygen.ai/aws_pacific/avatar_tmp/09ab8d6f377c4566ae0696af4231c4b3/667780c6df884e9ab571243307cd69c1.jpeg?Expires=1756977942&Signature=qpW82tdOOiu4-qo2UvdOD9kxQAig6g3NlxVlRhKRd7mxw275N~RY6zN1-TikYLlM1UUE-Ecqp6~LguWDYS3gHrGnFgE73c9qlWqP7Cg43IJz7imtsDrR2N8jGP6KigW4XFKtclLttMOPOnp8AImBj44MaASAz7QCEC3nv~zXHbav6amSZNmhpxZlyllFnh8rdkZzckmqO4HaTZqqYRr3EQYUEC23u~A5b4-oXECSSYCWolFHKihKjt4bDWnU45uuasZ~mQkNDtR8aqXmuT9oXKyZflByfUHENGBS9sWY66Em~jq854bvQwTCzKPCJJR9jCw45Ndp5yhYzvV8iYbXzw__&Key-Pair-Id=K38HBHX5LX3X2H",
+            "video_url": "https://files2.heygen.ai/aws_pacific/avatar_tmp/09ab8d6f377c4566ae0696af4231c4b3/667780c6df884e9ab571243307cd69c1.mp4?Expires=1756977942&Signature=USBP1oYH8N53yJ9EVlHgn~tL8g0rrqXYdshjlLEqDzvQKKP6vdXOf5t7Imi0IeCYQvhEsrS~nOC9yvyc8v2y0hyUKeGOYPUtrghEtFJEhAEhUvQsuIi92niavJotw9HIXoxo4jQCJlm9JDa-jJ132OPXtllKrRKWTG7YggEvHtyVCjqlVJ9oqCX-0ZC8hwQzGByIF1-gwHEtb6Zpp9xZcBW9tlBGGjXUlAFFKq16suhjearfRpJzEi4maSF5JGoYNYGA-NhBJRbHKFumgal2b-YMdDymC9nLkS5~Jc-P6MINFTSVL8kSrqJWfg9dQn3ezc31eB6WTIPI2YXyI36VTw__&Key-Pair-Id=K38HBHX5LX3X2H",
+            "video_url_caption": null
+          },
+          "message": "Success"
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": null
+}
